@@ -54,6 +54,27 @@ export default function PayPage() {
     navigator.clipboard.writeText(text);
     toast({ title: `${type} copied to clipboard!` });
   };
+  
+  const handleShare = async () => {
+    const shareData = {
+      title: "UPI Payment Request",
+      text: `${payment?.name} is requesting a payment of ₹${payment?.amount.toFixed(2)}.`,
+      url: window.location.href,
+    };
+    if (navigator.share && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+      } catch (error) {
+        console.error("Sharing failed", error);
+        // Fallback to copying link if share is cancelled or fails
+        copyToClipboard(window.location.href, "Share Link");
+      }
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      copyToClipboard(window.location.href, "Share Link");
+    }
+  };
+
 
   const isExpired = useMemo(() => {
     if (!payment?.expiry) return false;
@@ -135,10 +156,10 @@ export default function PayPage() {
                 </Button>
 
                 <div className="flex w-full gap-2">
-                    <Button variant="outline" className="flex-1" onClick={() => copyToClipboard(payment.upiLink, "UPI Link")}>
-                        <Copy className="mr-2" /> Copy UPI Link
+                    <Button variant="outline" className="flex-1" onClick={() => copyToClipboard(window.location.href, "Page Link")}>
+                        <Copy className="mr-2" /> Copy Page Link
                     </Button>
-                    <Button variant="outline" className="flex-1" onClick={() => copyToClipboard(window.location.href, "Share Link")}>
+                    <Button variant="outline" className="flex-1" onClick={handleShare}>
                         <Share2 className="mr-2" /> Share Page
                     </Button>
                 </div>
