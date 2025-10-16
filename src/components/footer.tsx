@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 
 export default function Footer() {
@@ -10,6 +11,9 @@ export default function Footer() {
         <div className="flex gap-4 sm:gap-6">
           <Link href="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
             About
+          </Link>
+           <Link href="/developers" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            For Developers
           </Link>
           <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
             Terms
