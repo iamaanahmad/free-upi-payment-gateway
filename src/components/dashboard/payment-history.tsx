@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Skeleton } from "../ui/skeleton";
 import { useCollection, useFirestore, useMemoFirebase, updateDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-intl/navigation";
 import {useTranslations} from 'next-intl';
 
 

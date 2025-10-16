@@ -11,11 +11,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { Link } from 'next-intl/navigation';
+import { Link, useRouter } from 'next-intl/navigation';
 import { onAuthStateChanged } from "firebase/auth";
 import { Separator } from "@/components/ui/separator";
 import {useTranslations} from 'next-intl';
-import { useRouter } from "next/navigation";
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
