@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from 'next-intl/navigation';
+import Link from 'next/link';
 import {useTranslations} from 'next-intl';
 
 export default function Footer() {
@@ -25,6 +25,9 @@ export default function Footer() {
           </Link>
           <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
             {t('privacy')}
+          </Link>
+          <Link href="/embed" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            {t('embed')}
           </Link>
         </div>
       </div>

@@ -61,12 +61,12 @@ export default function EmbedPage() {
     try {
       const { upiId, amount, name, notes, expiry } = values;
       const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(notes || 'Payment')}`;
-      
+
       const collectionPath = 'publicPaymentRequests';
       const paymentsRef = collection(firestore, collectionPath);
 
       const docRef = await addDocumentNonBlocking(paymentsRef, {
-        userId: null, 
+        userId: null,
         name,
         upiId,
         amount,
@@ -80,7 +80,7 @@ export default function EmbedPage() {
       if (docRef?.id) {
         toast({ title: t_toasts('linkGenerated') });
         window.open(`/pay/${docRef.id}?public=true`, '_blank');
-      } 
+      }
     } catch (error) {
       console.error(error);
       toast({ title: t_toasts('error'), description: t_toasts('generationFailed'), variant: "destructive" });
@@ -189,7 +189,7 @@ export default function EmbedPage() {
                           selected={field.value}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date < new Date(new Date().setHours(0,0,0,0)) 
+                            date < new Date(new Date().setHours(0,0,0,0))
                           }
                           initialFocus
                         />

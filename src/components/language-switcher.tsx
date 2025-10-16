@@ -7,9 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {locales, localeNames} from '@/i18n';
+import {locales, localeNames} from '@/i18n/request';
 import {useLocale, useTranslations} from 'next-intl';
-import {usePathname, useRouter} from 'next-intl/navigation';
+import {usePathname, useRouter} from 'next/navigation';
 
 export default function LanguageSwitcher() {
   const t = useTranslations('LanguageSwitcher');
@@ -18,7 +18,7 @@ export default function LanguageSwitcher() {
   const pathname = usePathname();
 
   const onSelectChange = (value: string) => {
-    router.replace(pathname, {locale: value});
+    router.replace(pathname.replace(`/${locale}`, `/${value}`));
   };
 
   return (

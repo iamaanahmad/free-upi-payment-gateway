@@ -13,8 +13,11 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Share2, AlertCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { toDate } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
+
+export const dynamic = 'force-dynamic';
 
 export default function PayPage() {
   const params = useParams();
@@ -80,7 +83,7 @@ export default function PayPage() {
 
   const isExpired = useMemo(() => {
     if (!payment?.expiry) return false;
-    const expiryDate = (payment.expiry as any).toDate ? (payment.expiry as any).toDate() : new Date(payment.expiry);
+    const expiryDate = toDate(payment.expiry);
     return new Date() > expiryDate;
   }, [payment?.expiry]);
 
@@ -156,11 +159,11 @@ export default function PayPage() {
             <div className="text-xs text-muted-foreground text-center">
                 <p>Requested to <span className="font-mono bg-muted px-1.5 py-0.5 rounded">{payment.upiId}</span></p>
                  <p>
-                    Link created {formatDistanceToNow( (payment.timestamp as any).toDate ? (payment.timestamp as any).toDate() : new Date(payment.timestamp), { addSuffix: true })}
+                    Link created {formatDistanceToNow(toDate(payment.timestamp), { addSuffix: true })}
                 </p>
                 {payment.expiry && (
                      <p>
-                        Expires in {formatDistanceToNow( (payment.expiry as any).toDate ? (payment.expiry as any).toDate() : new Date(payment.expiry) )}
+                        Expires in {formatDistanceToNow(toDate(payment.expiry))}
                     </p>
                 )}
             </div>

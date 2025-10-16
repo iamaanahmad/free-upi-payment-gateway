@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from 'next-intl/navigation';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useUser, useAuth } from '@/firebase';
@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LogOut, LayoutDashboard } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { Badge } from './ui/badge';
-import {useTranslations} from 'next-intl';
+import {useTranslations, useLocale} from 'next-intl';
 import LanguageSwitcher from './language-switcher';
 
 export default function Header() {
@@ -24,10 +24,12 @@ export default function Header() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
+  const locale = useLocale();
 
   const handleLogout = async () => {
+    if (!auth) return;
     await signOut(auth);
-    router.push('/');
+    router.push(`/${locale}/`);
   };
 
   return (
@@ -61,7 +63,7 @@ export default function Header() {
                     </div>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                <DropdownMenuItem onClick={() => router.push(`/${locale}/dashboard`)}>
                   <LayoutDashboard className="mr-2 h-4 w-4" />
                   <span>{t('dashboard')}</span>
                 </DropdownMenuItem>

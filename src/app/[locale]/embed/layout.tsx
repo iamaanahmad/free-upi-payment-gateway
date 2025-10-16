@@ -1,7 +1,9 @@
 
-import '../globals.css';
+import '../../globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { FirebaseClientProvider } from '@/firebase';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/i18n/messages/en.json';
 
 // This is a minimal layout for the embeddable widget.
 // It does not include the standard header or footer.
@@ -19,12 +21,14 @@ export default function EmbedLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased bg-transparent">
-        <FirebaseClientProvider>
-            <main>
-              {children}
-            </main>
-            <Toaster />
-        </FirebaseClientProvider>
+        <NextIntlClientProvider locale="en" messages={en}>
+          <FirebaseClientProvider>
+              <main>
+                {children}
+              </main>
+              <Toaster />
+          </FirebaseClientProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

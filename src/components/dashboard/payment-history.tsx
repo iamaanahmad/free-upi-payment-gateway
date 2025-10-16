@@ -18,8 +18,8 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Skeleton } from "../ui/skeleton";
 import { useCollection, useFirestore, useMemoFirebase, updateDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase";
-import { useRouter } from "next-intl/navigation";
-import {useTranslations} from 'next-intl';
+import { useRouter } from 'next/navigation';
+import {useTranslations, useLocale} from 'next-intl';
 
 
 interface PaymentHistoryProps {
@@ -32,6 +32,7 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
   const { toast } = useToast();
   const firestore = useFirestore();
   const router = useRouter();
+  const locale = useLocale();
 
   const paymentsQuery = useMemoFirebase(() => {
     if (!userId) return null;
@@ -111,7 +112,7 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                       <DropdownMenuItem onClick={() => router.push(`/pay/${p.id}`)}>
+                       <DropdownMenuItem onClick={() => router.push(`/${locale}/pay/${p.id}`)}>
                         <Eye className="mr-2 h-4 w-4" />
                         {t('actionViewPage')}
                       </DropdownMenuItem>

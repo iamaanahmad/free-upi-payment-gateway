@@ -11,10 +11,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { Link, useRouter } from 'next-intl/navigation';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { onAuthStateChanged } from "firebase/auth";
 import { Separator } from "@/components/ui/separator";
-import {useTranslations} from 'next-intl';
+import {useTranslations, useLocale} from 'next-intl';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
@@ -37,6 +38,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const auth = useAuth();
   const t = useTranslations(mode === 'login' ? 'LoginPage' : 'SignupPage');
   const t_toasts = useTranslations('Toasts');
+  const locale = useLocale();
 
   const formSchema = z.object({
     email: z.string().email({ message: "Please enter a valid email." }),
@@ -53,7 +55,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
   const handleAuthSuccess = () => {
     toast({ title: mode === 'login' ? t_toasts('loginSuccess') : t_toasts('signupSuccess') });
-    router.push("/dashboard");
+    router.push(`/${locale}/dashboard`);
   }
 
   const handleAuthError = () => {
@@ -65,6 +67,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   }
 
   const setupAuthListener = () => {
+    if (!auth) return () => {};
     setLoading(true);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
@@ -77,14 +80,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
   }
 
   const onEmailSubmit = (values: z.infer<typeof formSchema>) => {
+    if (!auth) return;
     const unsubscribe = setupAuthListener();
     
-    onAuthStateChanged(auth, (user, error) => {
+    onAuthStateChanged(auth, (user) => {
         unsubscribe(); 
         setLoading(false);
         if (user) {
             handleAuthSuccess();
-        } else if (error) {
+        } else {
             handleAuthError();
         }
     });
@@ -97,6 +101,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   };
 
   const onGoogleSubmit = () => {
+    if (!auth) return;
     setupAuthListener();
     initiateGoogleSignIn(auth);
   }

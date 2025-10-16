@@ -4,7 +4,7 @@ import { useEffect, useMemo } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { doc } from "firebase/firestore";
 import Image from "next/image";
-import { Link } from 'next-intl/navigation';
+import Link from 'next/link';
 import { useFirestore, useDoc, useMemoFirebase, useUser } from "@/firebase";
 import type { PaymentRequest } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Share2, AlertCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { toDate } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import {useTranslations} from 'next-intl';
@@ -111,7 +112,7 @@ export default function PaymentPageClient() {
 
   const isExpired = useMemo(() => {
     if (!payment?.expiry) return false;
-    const expiryDate = (payment.expiry as any).toDate ? (payment.expiry as any).toDate() : new Date(payment.expiry);
+    const expiryDate = toDate(payment.expiry);
     return new Date() > expiryDate;
   }, [payment?.expiry]);
 
@@ -187,11 +188,11 @@ export default function PaymentPageClient() {
             <div className="text-xs text-muted-foreground text-center">
                 <p>{t('requestedTo')} <span className="font-mono bg-muted px-1.5 py-0.5 rounded">{payment.upiId}</span></p>
                  <p>
-                    {t('linkCreated', {timeAgo: formatDistanceToNow( (payment.timestamp as any).toDate ? (payment.timestamp as any).toDate() : new Date(payment.timestamp), { addSuffix: true })})}
+                    {t('linkCreated', {timeAgo: formatDistanceToNow(toDate(payment.timestamp), { addSuffix: true })}) }
                 </p>
                 {payment.expiry && (
                      <p>
-                        {t('expiresIn', {timeAgo: formatDistanceToNow( (payment.expiry as any).toDate ? (payment.expiry as any).toDate() : new Date(payment.expiry) )})}
+                        {t('expiresIn', {timeAgo: formatDistanceToNow(toDate(payment.expiry)) })}
                     </p>
                 )}
             </div>

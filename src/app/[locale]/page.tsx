@@ -19,6 +19,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {useTranslations} from 'next-intl';
 
@@ -99,7 +100,7 @@ export default function Home() {
             {t('title')}
           </h1>
           <CardDescription className="max-w-xl mx-auto pt-2 text-base">
-            {t('description')}
+            {t('description')} <Link href="/about" className="text-primary hover:underline">Learn more about UPI PG</Link>.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -237,7 +238,7 @@ export default function Home() {
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary" aria-label={t('feature3Title')}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
             <h3 className="mt-4 text-xl font-semibold">{t('feature3Title')}</h3>
             <p className="mt-1 text-muted-foreground">
-              {t('feature3Description')}
+              {t('feature3Description')} <Link href="/developers" className="text-primary hover:underline">Learn about developer integrations</Link>.
             </p>
           </div>
         </div>
@@ -271,6 +272,27 @@ export default function Home() {
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
+      </section>
+
+      <section className="w-full max-w-4xl mt-16 text-center">
+        <h2 className="text-3xl font-bold tracking-tight">Explore UPI PG</h2>
+        <p className="mt-2 text-lg text-muted-foreground">
+          Discover more ways to use UPI PG for your payment needs
+        </p>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <Link href="/about" className="block p-6 border rounded-lg hover:shadow-md transition-shadow">
+            <h3 className="text-xl font-semibold mb-2">About UPI PG</h3>
+            <p className="text-muted-foreground">Learn about our mission and how we make payments simple across India.</p>
+          </Link>
+          <Link href="/developers" className="block p-6 border rounded-lg hover:shadow-md transition-shadow">
+            <h3 className="text-xl font-semibold mb-2">For Developers</h3>
+            <p className="text-muted-foreground">Integrate UPI payments into your website or application with our developer tools.</p>
+          </Link>
+          <Link href="/embed" className="block p-6 border rounded-lg hover:shadow-md transition-shadow">
+            <h3 className="text-xl font-semibold mb-2">Embed Widget</h3>
+            <p className="text-muted-foreground">Add a payment form to your website with our simple embeddable widget.</p>
+          </Link>
+        </div>
       </section>
     </div>
   );

@@ -3,9 +3,33 @@
 
 # Allow all user-agents to crawl the site.
 User-agent: *
-Disallow: /dashboard/ # Disallow crawling of user-specific dashboard pages
+Allow: /
+
+# Disallow crawling of user-specific and sensitive pages
+Disallow: /dashboard/
 Disallow: /login/
 Disallow: /signup/
+Disallow: /pay/ # Dynamic payment pages
+Disallow: /api/ # API endpoints
+Disallow: /*?* # URLs with query parameters (except sitemap)
+Disallow: /*.json$ # JSON files
+Disallow: /*.md$ # Markdown files
+
+# Allow crawling of important resources
+Allow: /sitemap.xml
+Allow: /robots.txt
+Allow: /favicon.ico
+Allow: /og-image.png
+Allow: /twitter-image.png
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
 
 # Point crawlers to the sitemap.
 Sitemap: https://upipg.cit.org.in/sitemap.xml

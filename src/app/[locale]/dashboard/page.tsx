@@ -10,6 +10,8 @@ import type { PaymentRequest } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import {useTranslations} from 'next-intl';
 
+export const dynamic = 'force-dynamic';
+
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();

@@ -1,5 +1,7 @@
 import AuthForm from "@/components/auth-form";
 
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   return (
     <div className="flex items-center justify-center p-4 py-12">
