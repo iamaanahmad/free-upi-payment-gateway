@@ -1,79 +1,23 @@
-/**
- * @file Firestore Security Rules for UPI Linker App
- *
- * @core_philosophy This ruleset enforces a strict user-ownership model. Users can only access their own profile data and payment requests.
- * @data_structure User data is stored under `/users/{userId}`, and each user's payment requests are stored under `/users/{userId}/paymentRequests/{paymentRequestId}`.
- * @key_security_decisions User listing is disallowed for privacy. Path-based ownership is enforced for all data access.
- * @denormalization_for_authorization No denormalization is needed because path-based ownership is enforced.
- */
+
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    /**
-     * @description Controls access to user profile information.
-     * @path /users/{userId}
-     * @allow (create) User with UID 'user_abc' can create their own profile at /users/user_abc.
-     * @deny (create) User with UID 'user_abc' cannot create a profile at /users/user_xyz.
-     * @allow (get) User with UID 'user_abc' can read their profile at /users/user_abc.
-     * @deny (get) User with UID 'user_abc' cannot read the profile at /users/user_xyz.
-     * @allow (update) User with UID 'user_abc' can update their profile at /users/user_abc.
-     * @deny (update) User with UID 'user_abc' cannot update the profile at /users/user_xyz.
-     * @allow (delete) User with UID 'user_abc' can delete their profile at /users/user_abc.
-     * @deny (delete) User with UID 'user_abc' cannot delete the profile at /users/user_xyz.
-     * @principle Enforces document ownership for all operations.  Only the authenticated user can create, read, update, or delete their own profile.
-     */
-    match /users/{userId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      allow get: if isOwner(userId);
-      allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+    // Logged-in users can manage their own payment requests
+    match /users/{userId}/paymentRequests/{paymentRequestId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    /**
-     * @description Controls access to payment requests for a specific user.
-     * @path /users/{userId}/paymentRequests/{paymentRequestId}
-     * @allow (create) User with UID 'user_abc' can create a payment request under their profile.
-     * @deny (create) User with UID 'user_abc' cannot create a payment request under another user's profile.
-     * @allow (get) User with UID 'user_abc' can read a payment request under their profile.
-     * @deny (get) User with UID 'user_abc' cannot read a payment request under another user's profile.
-     * @allow (update) User with UID 'user_abc' can update a payment request under their profile.
-     * @deny (update) User with UID 'user_abc' cannot update a payment request under another user's profile.
-     * @allow (delete) User with UID 'user_abc' can delete a payment request under their profile.
-     * @deny (delete) User with UID 'user_abc' cannot delete a payment request under another user's profile.
-     * @principle Enforces path-based ownership. Only the owner of the user profile can manage their payment requests.
-     */
-    match /users/{userId}/paymentRequests/{paymentRequestId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if isExistingOwner(userId);
+    // Anyone can create a public payment request
+    match /publicPaymentRequests/{paymentRequestId} {
+      allow create: if request.auth == null;
+      allow read: if true; 
+      allow update, delete: if false;
+    }
+    
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

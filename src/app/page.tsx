@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -63,7 +64,7 @@ export default function Home() {
       const collectionPath = user ? `users/${user.uid}/paymentRequests` : 'publicPaymentRequests';
       const paymentsRef = collection(firestore, collectionPath);
 
-      const docRefPromise = addDocumentNonBlocking(paymentsRef, {
+      const docRef = await addDocumentNonBlocking(paymentsRef, {
         userId: user?.uid || null,
         name,
         upiId,
@@ -75,12 +76,18 @@ export default function Home() {
         upiLink,
       });
 
-      const docRef = await docRefPromise;
-      
-      toast({ title: "Payment link generated!" });
-      router.push(`/pay/${docRef.id}${user ? '' : '?public=true'}`);
+      if (docRef) {
+        toast({ title: "Payment link generated!" });
+        router.push(`/pay/${docRef.id}${user ? '' : '?public=true'}`);
+      } else {
+        // The error is handled by the global error handler, but we should stop loading.
+        // A toast will be shown by the error handler if configured.
+      }
+
 
     } catch (error) {
+      // This catch block might not be hit if non-blocking function handles it,
+      // but it's good practice to keep it for other potential errors.
       console.error(error);
       toast({ title: "Error", description: "Failed to generate payment link.", variant: "destructive" });
     } finally {
@@ -135,7 +142,7 @@ export default function Home() {
                     <FormItem>
                       <FormLabel>Amount (INR)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="100.00" {...field} step="0.01" />
+                        <Input type="number" placeholder="100.00" {...field} value={field.value || ''} step="0.01" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
