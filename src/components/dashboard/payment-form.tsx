@@ -15,13 +15,7 @@ import { Loader2 } from "lucide-react";
 import { PaymentRequest } from "@/lib/types";
 import { useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { Textarea } from "../ui/textarea";
-
-const formSchema = z.object({
-  name: z.string().min(1, { message: "Name is required." }),
-  upiId: z.string().min(5, { message: "Please enter a valid UPI ID." }).regex(/@/, { message: "Invalid UPI ID format." }),
-  amount: z.coerce.number().positive({ message: "Amount must be greater than 0." }),
-  notes: z.string().optional(),
-});
+import {useTranslations} from 'next-intl';
 
 interface PaymentFormProps {
   user: User;
@@ -29,9 +23,19 @@ interface PaymentFormProps {
 }
 
 export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormProps) {
+  const t = useTranslations('DashboardPage');
+  const t_errors = useTranslations('Errors');
+  const t_toasts = useTranslations('Toasts');
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const firestore = useFirestore();
+
+  const formSchema = z.object({
+    name: z.string().min(1, { message: t_errors('nameRequired') }),
+    upiId: z.string().min(5, { message: t_errors('upiIdRequired') }).regex(/@/, { message: t_errors('upiIdInvalid') }),
+    amount: z.coerce.number().positive({ message: t_errors('amountPositive') }),
+    notes: z.string().optional(),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,8 +55,8 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
       
       if (!firestore) {
         toast({
-          title: "Error",
-          description: "Firestore is not initialized.",
+          title: t_toasts('error'),
+          description: t_toasts('dbNotAvailable'),
           variant: "destructive",
         });
         setLoading(false);
@@ -92,9 +96,8 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
         notes: '',
         upiId: ''
       });
-      toast({ title: "Payment link generated!" });
+      toast({ title: t_toasts('linkGenerated') });
     } catch (error) {
-      // Error is handled by the non-blocking update function and global error listener
     } finally {
       setLoading(false);
     }
@@ -103,8 +106,8 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create Payment Link</CardTitle>
-        <CardDescription>Enter the details to generate a new payment link.</CardDescription>
+        <CardTitle>{t('createTitle')}</CardTitle>
+        <CardDescription>{t('createDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -114,9 +117,9 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Payee Name</FormLabel>
+                  <FormLabel>{t('payeeNameLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder={t('payeeNamePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,9 +130,9 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
               name="upiId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Your UPI ID</FormLabel>
+                  <FormLabel>{t('upiIdLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="your-name@upi" {...field} />
+                    <Input placeholder={t('upiIdPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -140,9 +143,9 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount (INR)</FormLabel>
+                  <FormLabel>{t('amountLabel')}</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="100.00" {...field} step="0.01" />
+                    <Input type="number" placeholder={t('amountPlaceholder')} {...field} step="0.01" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -153,9 +156,9 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Notes (Optional)</FormLabel>
+                    <FormLabel>{t('notesLabel')}</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="For coffee at the cafe" {...field} />
+                      <Textarea placeholder={t('notesPlaceholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -163,7 +166,7 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
               />
             <Button type="submit" className="w-full" disabled={loading || !firestore}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Generate Link
+              {t('generateButton')}
             </Button>
           </form>
         </Form>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -12,18 +11,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import Link from "next/link";
+import Link from "next-intl/link";
 import { onAuthStateChanged } from "firebase/auth";
 import { Separator } from "@/components/ui/separator";
-
-const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email." }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
-});
-
-type AuthFormProps = {
-  mode: "login" | "signup";
-};
+import {useTranslations} from 'next-intl';
+import {useRouter} from 'next-intl/client';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
@@ -35,11 +27,22 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 
+type AuthFormProps = {
+  mode: "login" | "signup";
+};
+
 export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const auth = useAuth();
+  const t = useTranslations(mode === 'login' ? 'LoginPage' : 'SignupPage');
+  const t_toasts = useTranslations('Toasts');
+
+  const formSchema = z.object({
+    email: z.string().email({ message: "Please enter a valid email." }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,14 +53,14 @@ export default function AuthForm({ mode }: AuthFormProps) {
   });
 
   const handleAuthSuccess = () => {
-    toast({ title: mode === 'login' ? "Logged in successfully!" : "Account created successfully!" });
+    toast({ title: mode === 'login' ? t_toasts('loginSuccess') : t_toasts('signupSuccess') });
     router.push("/dashboard");
   }
 
   const handleAuthError = () => {
     toast({
-        title: "Authentication failed",
-        description: "Please check your credentials and try again.",
+        title: t_toasts('authFailed'),
+        description: t_toasts('authFailedDescription'),
         variant: "destructive",
       });
   }
@@ -69,10 +72,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
       setLoading(false);
       if (user) {
         handleAuthSuccess();
-      } else {
-        // This might be called on initial load with no user, so we don't show an error then
-        // We only want to show error on a failed login/signup attempt.
-        // The individual submit handlers will manage the error toast now.
       }
     });
     return unsubscribe;
@@ -81,15 +80,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const onEmailSubmit = (values: z.infer<typeof formSchema>) => {
     const unsubscribe = setupAuthListener();
     
-    const onAuthChange = (user: any) => {
-        unsubscribe(); // Unsubscribe to prevent multiple triggers
+    onAuthStateChanged(auth, (user, error) => {
+        unsubscribe(); 
         setLoading(false);
         if (user) {
             handleAuthSuccess();
-        } else {
+        } else if (error) {
             handleAuthError();
         }
-    };
+    });
 
     if (mode === "signup") {
       initiateEmailSignUp(auth, values.email, values.password);
@@ -106,22 +105,18 @@ export default function AuthForm({ mode }: AuthFormProps) {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>{mode === "login" ? "Log In" : "Sign Up"}</CardTitle>
-        <CardDescription>
-          {mode === "login"
-            ? "Enter your credentials to access your account."
-            : "Create an account to start generating UPI links."}
-        </CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
             <Button variant="outline" className="w-full" onClick={onGoogleSubmit} disabled={loading}>
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2 h-4 w-4" />}
-                Sign {mode === 'login' ? 'in' : 'up'} with Google
+                {t('googleButton')}
             </Button>
             <div className="flex items-center space-x-2">
                 <Separator className="flex-1" />
-                <span className="text-xs text-muted-foreground">OR CONTINUE WITH</span>
+                <span className="text-xs text-muted-foreground">{t('orContinue')}</span>
                 <Separator className="flex-1" />
             </div>
         </div>
@@ -132,9 +127,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('emailLabel')}</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="m@example.com" {...field} />
+                    <Input type="email" placeholder={t('emailPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,7 +140,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('passwordLabel')}</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
@@ -155,23 +150,23 @@ export default function AuthForm({ mode }: AuthFormProps) {
             />
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {mode === "login" ? "Log In" : "Sign Up"}
+              {t('submitButton')}
             </Button>
           </form>
         </Form>
         <div className="mt-4 text-center text-sm">
           {mode === 'login' ? (
             <>
-              Don&apos;t have an account?{' '}
+              {t('signupPrompt')}
               <Link href="/signup" className="underline text-primary">
-                Sign up
+                {t('signupLink')}
               </Link>
             </>
           ) : (
             <>
-              Already have an account?{' '}
+              {t('loginPrompt')}
               <Link href="/login" className="underline text-primary">
-                Log in
+                {t('loginLink')}
               </Link>
             </>
           )}

@@ -10,7 +10,7 @@ import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, Loader2 } from "lucide-react";
@@ -18,16 +18,18 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {useTranslations} from 'next-intl';
 
-export default function EmbedPage() {
-  const t = useTranslations('EmbedPage');
+export default function Home() {
+  const t = useTranslations('HomePage');
   const t_errors = useTranslations('Errors');
   const t_toasts = useTranslations('Toasts');
-
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const formSchema = z.object({
@@ -37,7 +39,6 @@ export default function EmbedPage() {
     notes: z.string().optional(),
     expiry: z.date().optional(),
   });
-
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,11 +63,11 @@ export default function EmbedPage() {
       const { upiId, amount, name, notes, expiry } = values;
       const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(notes || 'Payment')}`;
       
-      const collectionPath = 'publicPaymentRequests';
+      const collectionPath = user ? `users/${user.uid}/paymentRequests` : 'publicPaymentRequests';
       const paymentsRef = collection(firestore, collectionPath);
 
       const docRef = await addDocumentNonBlocking(paymentsRef, {
-        userId: null, 
+        userId: user?.uid || null,
         name,
         upiId,
         amount,
@@ -79,8 +80,8 @@ export default function EmbedPage() {
 
       if (docRef?.id) {
         toast({ title: t_toasts('linkGenerated') });
-        window.open(`/pay/${docRef.id}?public=true`, '_blank');
-      } 
+        router.push(`/pay/${docRef.id}${user ? '' : '?public=true'}`);
+      }
     } catch (error) {
       console.error(error);
       toast({ title: t_toasts('error'), description: t_toasts('generationFailed'), variant: "destructive" });
@@ -91,17 +92,20 @@ export default function EmbedPage() {
 
 
   return (
-    <div className="container mx-auto p-4 bg-transparent">
-       <Card className="w-full max-w-2xl shadow-none border-0 bg-transparent">
-        <CardHeader className="text-center px-0">
-          <CardTitle className="text-2xl font-bold tracking-tight">
+    <div className="container mx-auto px-4 md:px-6 py-12 flex items-center justify-center flex-col">
+       <Card className="w-full max-w-2xl shadow-lg">
+        <CardHeader className="text-center">
+          <CardTitle className="text-4xl font-extrabold tracking-tight lg:text-5xl">
             {t('title')}
           </CardTitle>
+          <CardDescription className="max-w-xl mx-auto pt-2 text-base">
+            {t('description')}
+          </CardDescription>
         </CardHeader>
-        <CardContent className="px-0">
+        <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="name"
@@ -137,7 +141,7 @@ export default function EmbedPage() {
                     <FormItem>
                       <FormLabel>{t('amountLabel')}</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder={t('amountPlaceholder')} {...field} value={field.value ?? ""} step="0.01" />
+                        <Input type="number" placeholder={t('amountPlaceholder')} {...field} value={field.value || ''} step="0.01" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -208,6 +212,66 @@ export default function EmbedPage() {
           </Form>
         </CardContent>
       </Card>
+
+      <section className="w-full max-w-4xl mt-16 text-center">
+        <h2 className="text-3xl font-bold tracking-tight">{t('powerTitle')}</h2>
+        <p className="mt-2 text-lg text-muted-foreground">
+          {t('powerDescription')}
+        </p>
+        <div className="mt-8 grid gap-8 md:grid-cols-3">
+          <div className="flex flex-col items-center">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><rect width="8" height="8" x="3" y="3" rx="1"/><path d="M7 11h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2Z"/><path d="M11 3v2"/><path d="M7 3v2"/><path d="m21 15-4-4"/><path d="M17 15h4v4"/><path d="M3 11v2"/><path d="M3 7h2"/></svg>
+            <h3 className="mt-4 text-xl font-semibold">{t('feature1Title')}</h3>
+            <p className="mt-1 text-muted-foreground">
+              {t('feature1Description')}
+            </p>
+          </div>
+          <div className="flex flex-col items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            <h3 className="mt-4 text-xl font-semibold">{t('feature2Title')}</h3>
+            <p className="mt-1 text-muted-foreground">
+              {t('feature2Description')}
+            </p>
+          </div>
+          <div className="flex flex-col items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+            <h3 className="mt-4 text-xl font-semibold">{t('feature3Title')}</h3>
+            <p className="mt-1 text-muted-foreground">
+              {t('feature3Description')}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full max-w-4xl mt-16">
+        <h2 className="text-3xl font-bold tracking-tight text-center">{t('faqTitle')}</h2>
+        <Accordion type="single" collapsible className="w-full mt-8">
+            <AccordionItem value="item-1">
+                <AccordionTrigger>{t('faq1Question')}</AccordionTrigger>
+                <AccordionContent>
+                {t('faq1Answer')}
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+                <AccordionTrigger>{t('faq2Question')}</AccordionTrigger>
+                <AccordionContent>
+                {t('faq2Answer')}
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+                <AccordionTrigger>{t('faq3Question')}</AccordionTrigger>
+                <AccordionContent>
+                {t('faq3Answer')}
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-4">
+                <AccordionTrigger>{t('faq4Question')}</AccordionTrigger>
+                <AccordionContent>
+                {t('faq4Answer')}
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
+      </section>
     </div>
   );
 }

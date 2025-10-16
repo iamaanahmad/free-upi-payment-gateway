@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Share2 } from "lucide-react";
 import type { PaymentRequest } from "@/lib/types";
+import {useTranslations} from 'next-intl';
 
 interface PaymentDetailsDialogProps {
   payment: PaymentRequest | null;
@@ -23,6 +24,7 @@ interface PaymentDetailsDialogProps {
 }
 
 export default function PaymentDetailsDialog({ payment, isOpen, onClose, isPublic = false }: PaymentDetailsDialogProps) {
+  const t_toasts = useTranslations('Toasts');
   const { toast } = useToast();
 
   if (!payment) return null;
@@ -33,7 +35,13 @@ export default function PaymentDetailsDialog({ payment, isOpen, onClose, isPubli
 
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
-    toast({ title: `${type} copied to clipboard!` });
+    let toastMessage = '';
+    if (type === 'UPI Link') {
+      toastMessage = t_toasts('upiLinkCopied');
+    } else if (type === 'Shareable Link') {
+      toastMessage = t_toasts('shareableLinkCopied');
+    }
+    toast({ title: toastMessage });
   };
 
   return (

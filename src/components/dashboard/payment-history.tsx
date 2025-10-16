@@ -20,6 +20,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useCollection, useFirestore, useMemoFirebase, updateDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {useTranslations} from 'next-intl';
 
 
 interface PaymentHistoryProps {
@@ -27,6 +28,8 @@ interface PaymentHistoryProps {
 }
 
 export default function PaymentHistory({ userId }: PaymentHistoryProps) {
+  const t = useTranslations('DashboardPage');
+  const t_toasts = useTranslations('Toasts');
   const { toast } = useToast();
   const firestore = useFirestore();
   const router = useRouter();
@@ -41,37 +44,37 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
   const updateStatus = (id: string, status: "completed" | "failed") => {
     const docRef = doc(firestore, `users/${userId}/paymentRequests`, id);
     updateDocumentNonBlocking(docRef, { status });
-    toast({ title: `Marked as ${status}` });
+    toast({ title: status === 'completed' ? t_toasts('markedAsCompleted') : t_toasts('markedAsFailed') });
   };
 
   const deletePayment = (id: string) => {
     const docRef = doc(firestore, `users/${userId}/paymentRequests`, id);
     deleteDocumentNonBlocking(docRef);
-    toast({ title: "Payment request deleted." });
+    toast({ title: t_toasts('deleted') });
   }
 
   const shareLink = (id: string) => {
     const url = `${window.location.origin}/pay/${id}`;
     navigator.clipboard.writeText(url);
-    toast({ title: "Share link copied to clipboard!" });
+    toast({ title: t_toasts('shareLinkCopied') });
   }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
-        return <Badge className="bg-accent hover:bg-accent/90 text-accent-foreground">Completed</Badge>;
+        return <Badge className="bg-accent hover:bg-accent/90 text-accent-foreground">{t('statusCompleted')}</Badge>;
       case "failed":
-        return <Badge variant="destructive">Failed</Badge>;
+        return <Badge variant="destructive">{t('statusFailed')}</Badge>;
       default:
-        return <Badge variant="secondary">Pending</Badge>;
+        return <Badge variant="secondary">{t('statusPending')}</Badge>;
     }
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Payment History</CardTitle>
-        <CardDescription>A real-time list of your generated payment links.</CardDescription>
+        <CardTitle>{t('historyTitle')}</CardTitle>
+        <CardDescription>{t('historyDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
         {loading && (
@@ -83,15 +86,15 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
         )}
         {!loading && (!payments || payments.length === 0) && (
           <div className="text-center text-muted-foreground py-16 border-2 border-dashed rounded-lg">
-            <p className="font-semibold">You haven't created any payment links yet.</p>
-            <p className="text-sm">Use the form to get started!</p>
+            <p className="font-semibold">{t('noPayments')}</p>
+            <p className="text-sm">{t('getStarted')}</p>
           </div>
         )}
         <div className="space-y-4">
           {payments && payments.map((p) => (
             <div key={p.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-card transition-colors">
                 <div className="grid gap-1">
-                    <p className="font-semibold text-lg">₹{p.amount.toFixed(2)} to {p.name}</p>
+                    <p className="font-semibold text-lg">₹{p.amount.toFixed(2)} {t('paymentTo', {name: p.name})}</p>
                     <p className="text-sm text-muted-foreground">{p.upiId}</p>
                      <p className="text-xs text-muted-foreground italic">{p.notes}</p>
                     <p className="text-xs text-muted-foreground">
@@ -109,25 +112,25 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
                     <DropdownMenuContent align="end">
                        <DropdownMenuItem onClick={() => router.push(`/pay/${p.id}`)}>
                         <Eye className="mr-2 h-4 w-4" />
-                        View Page
+                        {t('actionViewPage')}
                       </DropdownMenuItem>
                        <DropdownMenuItem onClick={() => shareLink(p.id)}>
                         <Share2 className="mr-2 h-4 w-4" />
-                        Share
+                        {t('actionShare')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => updateStatus(p.id, 'completed')}>
                         <CheckCircle className="mr-2 h-4 w-4" />
-                        Mark as Completed
+                        {t('actionMarkCompleted')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => updateStatus(p.id, 'failed')}>
                         <XCircle className="mr-2 h-4 w-4" />
-                        Mark as Failed
+                        {t('actionMarkFailed')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem className="focus:bg-destructive/80 focus:text-destructive-foreground text-destructive" onClick={() => deletePayment(p.id)}>
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        {t('actionDelete')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
