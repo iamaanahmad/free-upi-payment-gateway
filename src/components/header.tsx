@@ -15,6 +15,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LogOut, LayoutDashboard } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
+import { Badge } from './ui/badge';
 
 export default function Header() {
   const { user, isUserLoading } = useUser();
@@ -31,7 +32,7 @@ export default function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8"/><path d="M10 17v-1a2 2 0 1 1 4 0v1"/><path d="M22 17v-1a2 2 0 1 0-4 0v1"/><path d="M12 21v-3.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V21"/></svg>
-          UPI Linker
+          UPI <Badge variant="default" className="text-xl px-2 py-0.5">PG</Badge>
         </Link>
         <div className="flex items-center gap-4">
           {isUserLoading ? (

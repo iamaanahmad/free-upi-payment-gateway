@@ -5,7 +5,7 @@ import Header from '@/components/header';
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'UPI Linker',
+  title: 'UPI PG',
   description: 'Generate UPI payment links instantly',
 };
 
