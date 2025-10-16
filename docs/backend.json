@@ -1,0 +1,123 @@
+{
+  "entities": {
+    "PaymentRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PaymentRequest",
+      "type": "object",
+      "description": "Represents a single payment request created by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the payment request."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N PaymentRequest) The ID of the user who created the payment request."
+        },
+        "upiId": {
+          "type": "string",
+          "description": "The UPI ID to which the payment is requested."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount requested in the payment."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The timestamp when the payment request was created.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the payment request (e.g., pending, completed, failed)."
+        },
+        "upiLink": {
+          "type": "string",
+          "description": "The generated UPI deep link for the payment request."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "upiId",
+        "amount",
+        "timestamp",
+        "status",
+        "upiLink"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the UPI Linker application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the user.",
+          "format": "email"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the user."
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "displayName"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information.  Access is restricted to authenticated users.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user, corresponding to Firebase Authentication's UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/paymentRequests/{paymentRequestId}",
+        "definition": {
+          "entityName": "PaymentRequest",
+          "schema": {
+            "$ref": "#/backend/entities/PaymentRequest"
+          },
+          "description": "Stores payment requests created by the user. Access is controlled via path-based ownership; only the user can read/write their own payment requests.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who created the payment request."
+            },
+            {
+              "name": "paymentRequestId",
+              "description": "The unique identifier of the payment request."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to securely manage UPI payment requests for the UPI Linker application. The core principle is Authorization Independence, achieved by structuring data to avoid `get()` calls in security rules. This enhances security and allows for atomic operations.\n\nUsers' payment requests are stored under their respective user IDs in the `/users/{userId}/paymentRequests/{paymentRequestId}` collection. This path-based ownership ensures that only the authenticated user can access their own payment requests. This structure simplifies list operations, ensuring users can only list their own payment requests. The payment request documents themselves do not require denormalized data because access is controlled by the path.\n\nThe segregation of data is clear, as user profiles and payment requests are stored in separate collections, each with its specific security posture.\n\nThis design leverages path-based ownership and avoids reliance on complex role-based access controls (RBAC) or custom claims.  It also ensures that rules act as filters, as a user can only list their own payment requests. Overall, this structure promotes clarity, security, and scalability for the UPI Linker application."
+  }
+}
