@@ -11,8 +11,12 @@
           "description": "Unique identifier for the payment request."
         },
         "userId": {
-          "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N PaymentRequest) The ID of the user who created the payment request."
+          "type": [ "string", "null" ],
+          "description": "Reference to User. (Relationship: User 1:N PaymentRequest) The ID of the user who created the payment request. Null for anonymous requests."
+        },
+        "name": {
+            "type": "string",
+            "description": "The name of the payee."
         },
         "upiId": {
           "type": "string",
@@ -22,10 +26,19 @@
           "type": "number",
           "description": "The amount requested in the payment."
         },
+         "notes": {
+            "type": "string",
+            "description": "Optional notes for the payment."
+        },
         "timestamp": {
           "type": "string",
           "description": "The timestamp when the payment request was created.",
           "format": "date-time"
+        },
+        "expiry": {
+            "type": ["string", "null"],
+            "description": "The timestamp when the payment link expires.",
+            "format": "date-time"
         },
         "status": {
           "type": "string",
@@ -39,6 +52,7 @@
       "required": [
         "id",
         "userId",
+        "name",
         "upiId",
         "amount",
         "timestamp",
@@ -89,7 +103,7 @@
           "schema": {
             "$ref": "#/backend/entities/User"
           },
-          "description": "Stores user profile information.  Access is restricted to authenticated users.",
+          "description": "Stores user profile information. Access is restricted to authenticated users.",
           "params": [
             {
               "name": "userId",
@@ -105,7 +119,7 @@
           "schema": {
             "$ref": "#/backend/entities/PaymentRequest"
           },
-          "description": "Stores payment requests created by the user. Access is controlled via path-based ownership; only the user can read/write their own payment requests.",
+          "description": "Stores payment requests created by a specific user. Access is controlled via path-based ownership; only the user can manage their own payment requests.",
           "params": [
             {
               "name": "userId",
@@ -117,8 +131,24 @@
             }
           ]
         }
+      },
+       {
+        "path": "/publicPaymentRequests/{paymentRequestId}",
+        "definition": {
+          "entityName": "PaymentRequest",
+          "schema": {
+            "$ref": "#/backend/entities/PaymentRequest"
+          },
+          "description": "Stores payment requests created anonymously. These are publicly readable but cannot be listed or modified after creation.",
+          "params": [
+             {
+              "name": "paymentRequestId",
+              "description": "The unique identifier of the payment request."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to securely manage UPI payment requests for the UPI Linker application. The core principle is Authorization Independence, achieved by structuring data to avoid `get()` calls in security rules. This enhances security and allows for atomic operations.\n\nUsers' payment requests are stored under their respective user IDs in the `/users/{userId}/paymentRequests/{paymentRequestId}` collection. This path-based ownership ensures that only the authenticated user can access their own payment requests. This structure simplifies list operations, ensuring users can only list their own payment requests. The payment request documents themselves do not require denormalized data because access is controlled by the path.\n\nThe segregation of data is clear, as user profiles and payment requests are stored in separate collections, each with its specific security posture.\n\nThis design leverages path-based ownership and avoids reliance on complex role-based access controls (RBAC) or custom claims.  It also ensures that rules act as filters, as a user can only list their own payment requests. Overall, this structure promotes clarity, security, and scalability for the UPI Linker application."
+    "reasoning": "The Firestore data structure is designed for a public-first UPI payment link generator. It supports both anonymous and authenticated users. Authenticated users' payment requests are stored in a subcollection under their user document (`/users/{userId}/paymentRequests/{paymentRequestId}`), ensuring strong data ownership and simplifying security rules. Anonymous requests are stored in a top-level collection (`/publicPaymentRequests/{paymentRequestId}`), which allows for public read access to individual documents but prevents listing the entire collection, protecting user privacy. This separation ensures scalability and security, allowing for features like link history and management for registered users while providing a quick and easy experience for anonymous users."
   }
 }

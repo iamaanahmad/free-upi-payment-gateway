@@ -14,10 +14,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { PaymentRequest } from "@/lib/types";
 import { useFirestore, addDocumentNonBlocking } from "@/firebase";
+import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
+  name: z.string().min(1, { message: "Name is required." }),
   upiId: z.string().min(5, { message: "Please enter a valid UPI ID." }).regex(/@/, { message: "Invalid UPI ID format." }),
   amount: z.coerce.number().positive({ message: "Amount must be greater than 0." }),
+  notes: z.string().optional(),
 });
 
 interface PaymentFormProps {
@@ -33,16 +36,18 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: user.displayName || "",
       upiId: "",
-      amount: "" as unknown as number,
+      amount: undefined,
+      notes: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      const { upiId, amount } = values;
-      const upiLink = `upi://pay?pa=${upiId}&pn=${user.displayName || user.email}&am=${amount}&tn=Payment via UPI Linker`;
+      const { upiId, amount, name, notes } = values;
+      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(notes || 'Payment')}`;
       
       if (!firestore) {
         toast({
@@ -57,8 +62,10 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
 
       const docRefPromise = addDocumentNonBlocking(paymentsRef, {
         userId: user.uid,
+        name,
         upiId,
         amount,
+        notes: notes || "",
         status: "pending",
         timestamp: serverTimestamp(),
         upiLink,
@@ -69,15 +76,22 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
       const newPayment: PaymentRequest = {
         id: docRef.id,
         userId: user.uid,
+        name,
         upiId,
         amount,
+        notes: notes || "",
         status: "pending",
         timestamp: new Date(), 
         upiLink,
       };
 
       onPaymentGenerated(newPayment);
-      form.reset();
+      form.reset({
+        ...form.getValues(),
+        amount: undefined,
+        notes: '',
+        upiId: ''
+      });
       toast({ title: "Payment link generated!" });
     } catch (error) {
       // Error is handled by the non-blocking update function and global error listener
@@ -90,12 +104,25 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
     <Card>
       <CardHeader>
         <CardTitle>Create Payment Link</CardTitle>
-        <CardDescription>Enter UPI ID and amount to generate a link.</CardDescription>
+        <CardDescription>Enter the details to generate a new payment link.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Payee Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
               control={form.control}
               name="upiId"
               render={({ field }) => (
@@ -115,12 +142,25 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
                 <FormItem>
                   <FormLabel>Amount (INR)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="100" {...field} step="0.01" />
+                    <Input type="number" placeholder="100.00" {...field} step="0.01" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+             <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Notes (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="For coffee at the cafe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             <Button type="submit" className="w-full" disabled={loading || !firestore}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Generate Link
