@@ -1,5 +1,6 @@
+"use client";
 
-import Link from 'next/link';
+import { Link } from 'next-intl/navigation';
 import {useTranslations} from 'next-intl';
 
 export default function Footer() {

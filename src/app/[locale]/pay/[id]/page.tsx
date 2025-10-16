@@ -4,7 +4,7 @@ import { useEffect, useMemo } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { doc } from "firebase/firestore";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from 'next-intl/navigation';
 import { useFirestore, useDoc, useMemoFirebase, useUser } from "@/firebase";
 import type { PaymentRequest } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -207,3 +207,5 @@ function PaymentPageSkeleton() {
       </div>
     );
   }
+
+    
