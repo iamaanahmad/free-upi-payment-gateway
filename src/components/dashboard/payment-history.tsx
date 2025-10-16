@@ -42,12 +42,14 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
   const { data: payments, isLoading: loading } = useCollection<PaymentRequest>(paymentsQuery);
 
   const updateStatus = (id: string, status: "completed" | "failed") => {
+    if (!firestore || !userId) return;
     const docRef = doc(firestore, `users/${userId}/paymentRequests`, id);
     updateDocumentNonBlocking(docRef, { status });
     toast({ title: status === 'completed' ? t_toasts('markedAsCompleted') : t_toasts('markedAsFailed') });
   };
 
   const deletePayment = (id: string) => {
+    if (!firestore || !userId) return;
     const docRef = doc(firestore, `users/${userId}/paymentRequests`, id);
     deleteDocumentNonBlocking(docRef);
     toast({ title: t_toasts('deleted') });

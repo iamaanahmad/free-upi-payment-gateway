@@ -95,9 +95,9 @@ export default function Home() {
     <div className="container mx-auto px-4 md:px-6 py-12 flex items-center justify-center flex-col">
        <Card className="w-full max-w-2xl shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
             {t('title')}
-          </CardTitle>
+          </h1>
           <CardDescription className="max-w-xl mx-auto pt-2 text-base">
             {t('description')}
           </CardDescription>
@@ -220,21 +220,21 @@ export default function Home() {
         </p>
         <div className="mt-8 grid gap-8 md:grid-cols-3">
           <div className="flex flex-col items-center">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><rect width="8" height="8" x="3" y="3" rx="1"/><path d="M7 11h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2Z"/><path d="M11 3v2"/><path d="M7 3v2"/><path d="m21 15-4-4"/><path d="M17 15h4v4"/><path d="M3 11v2"/><path d="M3 7h2"/></svg>
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary" aria-label={t('feature1Title')}><rect width="8" height="8" x="3" y="3" rx="1"/><path d="M7 11h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2Z"/><path d="M11 3v2"/><path d="M7 3v2"/><path d="m21 15-4-4"/><path d="M17 15h4v4"/><path d="M3 11v2"/><path d="M3 7h2"/></svg>
             <h3 className="mt-4 text-xl font-semibold">{t('feature1Title')}</h3>
             <p className="mt-1 text-muted-foreground">
               {t('feature1Description')}
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary" aria-label={t('feature2Title')}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
             <h3 className="mt-4 text-xl font-semibold">{t('feature2Title')}</h3>
             <p className="mt-1 text-muted-foreground">
               {t('feature2Description')}
             </p>
           </div>
           <div className="flex flex-col items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary" aria-label={t('feature3Title')}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
             <h3 className="mt-4 text-xl font-semibold">{t('feature3Title')}</h3>
             <p className="mt-1 text-muted-foreground">
               {t('feature3Description')}

@@ -1,6 +1,7 @@
 "use client";
 
-import { Link, useRouter } from 'next-intl/client';
+import { Link } from 'next-intl/navigation';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
