@@ -159,10 +159,11 @@ export default function PayPage() {
                 )}
             </div>
             <Separator className="w-full" />
-            <div className="text-center">
+            <div className="text-center text-xs text-muted-foreground space-y-2">
                 <Link href="/" className="text-sm text-primary hover:underline">
                     Create your own free UPI payment link
                 </Link>
+                <p>Powered by CIT India</p>
             </div>
         </CardContent>
       </Card>
