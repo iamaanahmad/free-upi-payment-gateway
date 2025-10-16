@@ -1,23 +1,30 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Logged-in users can manage their own payment requests
-    match /users/{userId}/paymentRequests/{paymentRequestId} {
+
+    // Authenticated Users: Can manage their own profile and payment requests.
+    match /users/{userId} {
+      // Only the authenticated user can access their own user document.
       allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Payment requests subcollection for authenticated users.
+      match /paymentRequests/{paymentRequestId} {
+        // Only the user who owns this subcollection can manage their payment requests.
+        allow read, create, update, delete: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
-    // Anyone can create a public payment request
+    // Public Payment Requests: For anonymous users.
     match /publicPaymentRequests/{paymentRequestId} {
+      // Anyone can read a single public payment request.
+      allow get: if true;
+      
+      // Anyone can create a public payment request.
       allow create: if request.auth == null;
-      allow read: if true; 
-      allow update, delete: if false;
-    }
-    
-    // Default deny all other access
-    match /{document=**} {
-      allow read, write: if false;
+
+      // Nobody can list, update, or delete public requests.
+      allow list, update, delete: if false;
     }
   }
 }
