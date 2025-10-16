@@ -1,47 +1,41 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { doc } from "firebase/firestore";
 import Image from "next/image";
-import { useFirestore, useDoc, useMemoFirebase } from "@/firebase";
+import Link from "next/link";
+import { useFirestore, useDoc, useMemoFirebase, useUser } from "@/firebase";
 import type { PaymentRequest } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Share2 } from "lucide-react";
+import { Copy, Share2, AlertCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 export default function PayPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const firestore = useFirestore();
+  const { user } = useUser();
 
   const paymentId = params.id as string;
   const isPublic = searchParams.get("public") === 'true';
 
   const docRef = useMemoFirebase(() => {
     if (!firestore || !paymentId) return null;
-    const collectionPath = isPublic ? 'publicPaymentRequests' : `paymentRequests`; // This assumes private links are at a root level if not public, adjust if nested under users
-    // For a real app, you might need more complex logic to find a private link if not public.
-    // The current logic on homepage creates user-links under /users/{uid}/paymentRequests. A user must be logged in to view that.
-    // For simplicity, we are assuming the shareable link is always from the public or a user-specific root collection. The current logic might need enhancement for private sharing.
-    // Let's assume for now that shared links are either public, or if private, they are accessed by the owner who is logged in.
-    // The prompt implies a non-logged in user can view the link, so public is the main path here.
-    if (isPublic) {
-        return doc(firestore, 'publicPaymentRequests', paymentId);
+    
+    if (!isPublic && user) {
+        return doc(firestore, `users/${user.uid}/paymentRequests`, paymentId);
     }
-    // This part is tricky without knowing who the user is. The page is public.
-    // We will stick to the public path as the query param indicates.
-    // If you need to support private links for anyone, the data model needs adjustment.
+    
     return doc(firestore, 'publicPaymentRequests', paymentId);
 
-
-  }, [firestore, paymentId, isPublic]);
+  }, [firestore, paymentId, isPublic, user]);
 
   const { data: payment, isLoading, error } = useDoc<PaymentRequest>(docRef);
 
@@ -66,11 +60,9 @@ export default function PayPage() {
         await navigator.share(shareData);
       } catch (error) {
         console.error("Sharing failed", error);
-        // Fallback to copying link if share is cancelled or fails
         copyToClipboard(window.location.href, "Share Link");
       }
     } else {
-      // Fallback for browsers that don't support the Web Share API
       copyToClipboard(window.location.href, "Share Link");
     }
   };
@@ -86,28 +78,14 @@ export default function PayPage() {
     return <PaymentPageSkeleton />;
   }
 
-  if (error) {
+  if (error || !payment) {
     return (
         <div className="container mx-auto p-4 md:p-6 lg:p-8 flex justify-center">
             <Alert variant="destructive" className="max-w-lg">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
-                    There was an error loading the payment details. Please check the link and try again.
-                </AlertDescription>
-            </Alert>
-        </div>
-    );
-  }
-
-  if (!payment) {
-    return (
-        <div className="container mx-auto p-4 md:p-6 lg:p-8 flex justify-center">
-             <Alert variant="destructive" className="max-w-lg">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Payment Not Found</AlertTitle>
-                <AlertDescription>
-                    The payment link is invalid or has been deleted.
+                    This payment link is invalid, has expired, or you do not have permission to view it. Please check the link and try again.
                 </AlertDescription>
             </Alert>
         </div>
@@ -157,10 +135,10 @@ export default function PayPage() {
 
                 <div className="flex w-full gap-2">
                     <Button variant="outline" className="flex-1" onClick={() => copyToClipboard(window.location.href, "Page Link")}>
-                        <Copy className="mr-2" /> Copy Page Link
+                        <Copy className="mr-2 h-4 w-4" /> Copy Page Link
                     </Button>
                     <Button variant="outline" className="flex-1" onClick={handleShare}>
-                        <Share2 className="mr-2" /> Share Page
+                        <Share2 className="mr-2 h-4 w-4" /> Share Page
                     </Button>
                 </div>
             </div>
@@ -175,6 +153,12 @@ export default function PayPage() {
                         Expires in {formatDistanceToNow( (payment.expiry as any).toDate ? (payment.expiry as any).toDate() : new Date(payment.expiry) )}
                     </p>
                 )}
+            </div>
+            <Separator className="w-full" />
+            <div className="text-center">
+                <Link href="/" className="text-sm text-primary hover:underline">
+                    Create your own free UPI payment link
+                </Link>
             </div>
         </CardContent>
       </Card>
