@@ -19,7 +19,6 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import type { PaymentRequest } from "@/lib/types";
 
 
 const formSchema = z.object({
@@ -76,7 +75,7 @@ export default function Home() {
         upiLink,
       });
 
-      if (docRef) {
+      if (docRef?.id) {
         toast({ title: "Payment link generated!" });
         router.push(`/pay/${docRef.id}${user ? '' : '?public=true'}`);
       } else {
@@ -97,11 +96,15 @@ export default function Home() {
 
 
   return (
-    <div className="container mx-auto px-4 md:px-6 py-12 flex items-center justify-center">
-       <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <CardTitle className="text-3xl">Instant UPI Payment Links</CardTitle>
-          <CardDescription>Generate and share UPI payment links in seconds. No login required.</CardDescription>
+    <div className="container mx-auto px-4 md:px-6 py-12 flex items-center justify-center flex-col">
+       <Card className="w-full max-w-2xl shadow-lg">
+        <CardHeader className="text-center">
+          <CardTitle className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+            Create Free UPI Payment Links Instantly
+          </CardTitle>
+          <CardDescription className="max-w-xl mx-auto pt-2 text-base">
+            Welcome to UPI PG, the simplest way to request payments. Generate a unique, shareable UPI payment page and QR code in seconds. Perfect for freelancers, small businesses, and individuals.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -114,7 +117,7 @@ export default function Home() {
                     <FormItem>
                       <FormLabel>Payee Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} />
+                        <Input placeholder="Your or your business name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -125,7 +128,7 @@ export default function Home() {
                   name="upiId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>UPI ID</FormLabel>
+                      <FormLabel>Your UPI ID</FormLabel>
                       <FormControl>
                         <Input placeholder="your-name@upi" {...field} />
                       </FormControl>
@@ -154,9 +157,9 @@ export default function Home() {
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Notes (Optional)</FormLabel>
+                    <FormLabel>Payment Notes (Optional)</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="For coffee at the cafe" {...field} />
+                      <Textarea placeholder="E.g., for project consultation, coffee, etc." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -168,7 +171,7 @@ export default function Home() {
                 name="expiry"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Expiry Date (Optional)</FormLabel>
+                    <FormLabel>Link Expiry Date (Optional)</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -182,7 +185,7 @@ export default function Home() {
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span>Pick a date</span>
+                              <span>Pick a date for the link to expire</span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -207,12 +210,42 @@ export default function Home() {
 
               <Button type="submit" className="w-full text-lg py-6" disabled={loading}>
                  {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-                Generate Payment Link
+                Generate Secure Payment Link
               </Button>
             </form>
           </Form>
         </CardContent>
       </Card>
+
+      <section className="w-full max-w-4xl mt-16 text-center">
+        <h2 className="text-3xl font-bold tracking-tight">The Power of Simplicity</h2>
+        <p className="mt-2 text-lg text-muted-foreground">
+          Receive payments without the complexity. Our platform is built for speed and ease of use.
+        </p>
+        <div className="mt-8 grid gap-8 md:grid-cols-3">
+          <div className="flex flex-col items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><path d="M4 12a8 8 0 0 1 8-8 8 8 0 0 1 8 8M7 22l1-1-1-1M17 22l-1-1 1-1M12 2v2M2 7h2M20 7h2M4 17l2-2M20 17l-2-2M12 18a6 6 0 0 1-6-6h12a6 6 0 0 1-6 6Z"/></svg>
+            <h3 className="mt-4 text-xl font-semibold">No Login Needed</h3>
+            <p className="mt-1 text-muted-foreground">
+              Generate links instantly. No sign-up required for one-time payments, making it friction-free for you and your payers.
+            </p>
+          </div>
+          <div className="flex flex-col items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            <h3 className="mt-4 text-xl font-semibold">Secure and Private</h3>
+            <p className="mt-1 text-muted-foreground">
+              Leveraging the robust security of the UPI network. Create a free account to manage your links with enhanced privacy controls.
+            </p>
+          </div>
+          <div className="flex flex-col items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+            <h3 className="mt-4 text-xl font-semibold">Dashboard for Users</h3>
+            <p className="mt-1 text-muted-foreground">
+              Sign up to track payment history, manage all your links, and see real-time status updates in a personal dashboard.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
