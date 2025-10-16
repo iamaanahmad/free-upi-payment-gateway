@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/auth-context";
+import { useUser } from "@/firebase";
 import PaymentForm from "@/components/dashboard/payment-form";
 import PaymentHistory from "@/components/dashboard/payment-history";
 import PaymentDetailsDialog from "@/components/dashboard/payment-details-dialog";
@@ -10,17 +10,17 @@ import type { PaymentRequest } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
-  const { user, loading } = useAuth();
+  const { user, isUserLoading } = useUser();
   const router = useRouter();
   const [activePayment, setActivePayment] = useState<PaymentRequest | null>(null);
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!isUserLoading && !user) {
       router.push("/login");
     }
-  }, [user, loading, router]);
+  }, [user, isUserLoading, router]);
 
-  if (loading || !user) {
+  if (isUserLoading || !user) {
     return (
       <div className="container mx-auto p-4 md:p-6 lg:p-8">
         <div className="grid gap-8 md:grid-cols-3">

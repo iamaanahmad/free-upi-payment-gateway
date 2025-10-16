@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-
+import { useAuth, initiateEmailSignUp, initiateEmailSignIn } from "@/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -15,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { onAuthStateChanged } from "firebase/auth";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -29,6 +28,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const auth = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,25 +38,28 @@ export default function AuthForm({ mode }: AuthFormProps) {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     setLoading(true);
-    try {
-      if (mode === "signup") {
-        await createUserWithEmailAndPassword(auth, values.email, values.password);
-        toast({ title: "Account created successfully!" });
-      } else {
-        await signInWithEmailAndPassword(auth, values.email, values.password);
-        toast({ title: "Logged in successfully!" });
-      }
-      router.push("/dashboard");
-    } catch (error: any) {
-      toast({
-        title: "Authentication failed",
-        description: error.code.replace('auth/', '').replace(/-/g, ' '),
-        variant: "destructive",
-      });
-    } finally {
+
+    const unsubscribe = onAuthStateChanged(auth, (user, ) => {
+      unsubscribe();
       setLoading(false);
+      if (user) {
+        toast({ title: mode === 'login' ? "Logged in successfully!" : "Account created successfully!" });
+        router.push("/dashboard");
+      } else {
+        toast({
+            title: "Authentication failed",
+            description: "Please check your credentials and try again.",
+            variant: "destructive",
+          });
+      }
+    });
+
+    if (mode === "signup") {
+      initiateEmailSignUp(auth, values.email, values.password);
+    } else {
+      initiateEmailSignIn(auth, values.email, values.password);
     }
   };
 

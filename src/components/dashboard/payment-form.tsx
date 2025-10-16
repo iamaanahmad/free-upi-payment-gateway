@@ -4,10 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { collection, serverTimestamp } from "firebase/firestore";
 import { User } from "firebase/auth";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -15,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { PaymentRequest } from "@/lib/types";
+import { useFirestore, addDocumentNonBlocking } from "@/firebase";
 
 const formSchema = z.object({
   upiId: z.string().min(5, { message: "Please enter a valid UPI ID." }).regex(/@/, { message: "Invalid UPI ID format." }),
@@ -29,6 +28,7 @@ interface PaymentFormProps {
 export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,7 +44,9 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
       const { upiId, amount } = values;
       const upiLink = `upi://pay?pa=${upiId}&pn=${user.displayName || user.email}&am=${amount}&tn=Payment via UPI Linker`;
       
-      const docRef = await addDoc(collection(db, "payments"), {
+      const paymentsRef = collection(firestore, `users/${user.uid}/paymentRequests`);
+
+      const docRefPromise = addDocumentNonBlocking(paymentsRef, {
         userId: user.uid,
         upiId,
         amount,
@@ -52,6 +54,8 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
         timestamp: serverTimestamp(),
         upiLink,
       });
+
+      const docRef = await docRefPromise;
 
       const newPayment: PaymentRequest = {
         id: docRef.id,
@@ -67,12 +71,7 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
       form.reset();
       toast({ title: "Payment link generated!" });
     } catch (error) {
-      console.error("Error creating payment request:", error);
-      toast({
-        title: "Error",
-        description: "Failed to generate payment link. Please try again.",
-        variant: "destructive",
-      });
+      // Error is handled by the non-blocking update function and global error listener
     } finally {
       setLoading(false);
     }

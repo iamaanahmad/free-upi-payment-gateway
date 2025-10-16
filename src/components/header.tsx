@@ -2,9 +2,8 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/auth-context';
+import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import {
   DropdownMenu,
@@ -14,11 +13,12 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { LogOut, LayoutDashboard, User as UserIcon } from 'lucide-react';
+import { LogOut, LayoutDashboard } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 
 export default function Header() {
-  const { user, loading } = useAuth();
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -34,7 +34,7 @@ export default function Header() {
           UPI Linker
         </Link>
         <div className="flex items-center gap-4">
-          {loading ? (
+          {isUserLoading ? (
             <Skeleton className="h-10 w-24 rounded-md" />
           ) : user ? (
             <DropdownMenu>
