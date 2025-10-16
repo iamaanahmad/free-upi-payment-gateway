@@ -1,0 +1,11 @@
+
+# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+
+# Allow all user-agents to crawl the site.
+User-agent: *
+Disallow: /dashboard/ # Disallow crawling of user-specific dashboard pages
+Disallow: /login/
+Disallow: /signup/
+
+# Point crawlers to the sitemap.
+Sitemap: https://upipg.cit.org.in/sitemap.xml
