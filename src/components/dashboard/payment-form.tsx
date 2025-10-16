@@ -34,7 +34,7 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
     resolver: zodResolver(formSchema),
     defaultValues: {
       upiId: "",
-      amount: undefined,
+      amount: "" as unknown as number,
     },
   });
 
@@ -44,6 +44,15 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
       const { upiId, amount } = values;
       const upiLink = `upi://pay?pa=${upiId}&pn=${user.displayName || user.email}&am=${amount}&tn=Payment via UPI Linker`;
       
+      if (!firestore) {
+        toast({
+          title: "Error",
+          description: "Firestore is not initialized.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
       const paymentsRef = collection(firestore, `users/${user.uid}/paymentRequests`);
 
       const docRefPromise = addDocumentNonBlocking(paymentsRef, {
@@ -112,7 +121,7 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading || !firestore}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Generate Link
             </Button>
