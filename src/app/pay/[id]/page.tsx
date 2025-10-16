@@ -43,6 +43,12 @@ export default function PayPage() {
 
   const { data: payment, isLoading, error } = useDoc<PaymentRequest>(docRef);
 
+  useEffect(() => {
+    if (payment) {
+        document.title = `Payment Request from ${payment.name} for ₹${payment.amount.toFixed(2)}`;
+    }
+  }, [payment]);
+
   const qrCodeUrl = useMemo(() => {
     if (!payment?.upiLink) return "";
     return `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(payment.upiLink)}`;
@@ -127,13 +133,13 @@ export default function PayPage() {
             </div>
 
           <div className="p-2 bg-white rounded-lg border shadow-md">
-            {qrCodeUrl && <Image src={qrCodeUrl} alt="UPI QR Code" width={256} height={256} />}
+            {qrCodeUrl && <Image src={qrCodeUrl} alt={`UPI QR Code for payment to ${payment.name}`} width={256} height={256} />}
           </div>
 
            <div className="w-full space-y-4">
                 <Button asChild className="w-full text-lg py-6">
                     <a href={payment.upiLink}>
-                        Pay with UPI App
+                        Pay with any UPI App
                     </a>
                 </Button>
 

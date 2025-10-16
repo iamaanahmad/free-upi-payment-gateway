@@ -19,6 +19,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 
 const formSchema = z.object({
@@ -100,10 +101,10 @@ export default function Home() {
        <Card className="w-full max-w-2xl shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="text-4xl font-extrabold tracking-tight lg:text-5xl">
-            Create Free UPI Payment Links Instantly
+            Free UPI QR Code & Payment Link Generator
           </CardTitle>
           <CardDescription className="max-w-xl mx-auto pt-2 text-base">
-            Welcome to UPI PG, the simplest way to request payments. Generate a unique, shareable UPI payment page and QR code in seconds. Perfect for freelancers, small businesses, and individuals.
+            Welcome to UPI PG, the best and simplest tool to generate free UPI payment links and QR codes with a custom amount. Perfect for freelancers, small businesses, and individuals across India.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -130,7 +131,7 @@ export default function Home() {
                     <FormItem>
                       <FormLabel>Your UPI ID</FormLabel>
                       <FormControl>
-                        <Input placeholder="your-name@upi" {...field} />
+                        <Input placeholder="your-id@bank" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -210,7 +211,7 @@ export default function Home() {
 
               <Button type="submit" className="w-full text-lg py-6" disabled={loading}>
                  {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-                Generate Secure Payment Link
+                Generate Secure Payment Link & QR Code
               </Button>
             </form>
           </Form>
@@ -218,23 +219,23 @@ export default function Home() {
       </Card>
 
       <section className="w-full max-w-4xl mt-16 text-center">
-        <h2 className="text-3xl font-bold tracking-tight">The Power of Simplicity</h2>
+        <h2 className="text-3xl font-bold tracking-tight">The Power of Simplicity for India's Digital Payments</h2>
         <p className="mt-2 text-lg text-muted-foreground">
-          Receive payments without the complexity. Our platform is built for speed and ease of use.
+          Receive payments without the complexity. Our platform leverages the full potential of BHIM UPI for speed and ease of use.
         </p>
         <div className="mt-8 grid gap-8 md:grid-cols-3">
           <div className="flex flex-col items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><path d="M4 12a8 8 0 0 1 8-8 8 8 0 0 1 8 8M7 22l1-1-1-1M17 22l-1-1 1-1M12 2v2M2 7h2M20 7h2M4 17l2-2M20 17l-2-2M12 18a6 6 0 0 1-6-6h12a6 6 0 0 1-6 6Z"/></svg>
-            <h3 className="mt-4 text-xl font-semibold">No Login Needed</h3>
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><rect width="8" height="8" x="3" y="3" rx="1"/><path d="M7 11h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2Z"/><path d="M11 3v2"/><path d="M7 3v2"/><path d="m21 15-4-4"/><path d="M17 15h4v4"/><path d="M3 11v2"/><path d="M3 7h2"/></svg>
+            <h3 className="mt-4 text-xl font-semibold">QR Code with Amount</h3>
             <p className="mt-1 text-muted-foreground">
-              Generate links instantly. No sign-up required for one-time payments, making it friction-free for you and your payers.
+              Generate a unique UPI QR code for your specific amount. Your payers just scan and pay, no amount entry needed.
             </p>
           </div>
           <div className="flex flex-col items-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
             <h3 className="mt-4 text-xl font-semibold">Secure and Private</h3>
             <p className="mt-1 text-muted-foreground">
-              Leveraging the robust security of the UPI network. Create a free account to manage your links with enhanced privacy controls.
+              Leveraging the NPCI & BHIM UPI network. Sign up for a free account to manage your links with enhanced privacy controls.
             </p>
           </div>
           <div className="flex flex-col items-center">
@@ -245,6 +246,36 @@ export default function Home() {
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="w-full max-w-4xl mt-16">
+        <h2 className="text-3xl font-bold tracking-tight text-center">Frequently Asked Questions</h2>
+        <Accordion type="single" collapsible className="w-full mt-8">
+            <AccordionItem value="item-1">
+                <AccordionTrigger>Is this service really free?</AccordionTrigger>
+                <AccordionContent>
+                Yes, UPI PG is completely free for generating individual payment links. We believe in making payments simple and accessible for everyone.
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+                <AccordionTrigger>Do I need a bank account to use this?</AccordionTrigger>
+                <AccordionContent>
+                You need a UPI ID, which is linked to your bank account via an app like Google Pay, PhonePe, Paytm, or your bank's own BHIM UPI app. Our service generates a link or QR code that the payer uses; we never ask for your bank account details.
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+                <AccordionTrigger>Can I generate a UPI QR code without an amount?</AccordionTrigger>
+                <AccordionContent>
+                Currently, our tool is designed as a UPI QR code generator with amount included to simplify the payment process. You must specify an amount to generate a link.
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-4">
+                <AccordionTrigger>Is this an official NPCI or BHIM UPI QR code generator?</AccordionTrigger>
+                <AccordionContent>
+                We are an independent platform that uses the standard UPI protocol defined by NPCI. We provide a simple interface to create payment links and QR codes that work across the entire UPI network.
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
       </section>
     </div>
   );
