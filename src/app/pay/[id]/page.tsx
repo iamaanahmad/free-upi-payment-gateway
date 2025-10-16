@@ -29,10 +29,14 @@ export default function PayPage() {
   const docRef = useMemoFirebase(() => {
     if (!firestore || !paymentId) return null;
     
-    if (!isPublic && user) {
+    // For non-public links, we need to know the user to find the document.
+    // If the user is still loading, we can't build the path yet.
+    if (!isPublic) {
+        if (!user) return null; // Wait for user object
         return doc(firestore, `users/${user.uid}/paymentRequests`, paymentId);
     }
     
+    // Public links don't depend on the user.
     return doc(firestore, 'publicPaymentRequests', paymentId);
 
   }, [firestore, paymentId, isPublic, user]);
@@ -60,10 +64,10 @@ export default function PayPage() {
         await navigator.share(shareData);
       } catch (error) {
         console.error("Sharing failed", error);
-        copyToClipboard(window.location.href, "Share Link");
+        copyToClipboard(window.location.href, "Page Link");
       }
     } else {
-      copyToClipboard(window.location.href, "Share Link");
+      copyToClipboard(window.location.href, "Page Link");
     }
   };
 
@@ -74,7 +78,7 @@ export default function PayPage() {
     return new Date() > expiryDate;
   }, [payment?.expiry]);
 
-  if (isLoading) {
+  if (isLoading || !docRef) {
     return <PaymentPageSkeleton />;
   }
 
@@ -175,9 +179,9 @@ function PaymentPageSkeleton() {
                  <Skeleton className="h-4 w-64 mt-2" />
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-6">
-                 <div className="text-center">
-                    <Skeleton className="h-12 w-40" />
-                    <Skeleton className="h-4 w-32 mt-2" />
+                 <div className="text-center space-y-2">
+                    <Skeleton className="h-12 w-40 mx-auto" />
+                    <Skeleton className="h-4 w-32 mx-auto" />
                 </div>
                 <Skeleton className="h-64 w-64 rounded-lg" />
                  <div className="w-full space-y-4">
@@ -188,8 +192,8 @@ function PaymentPageSkeleton() {
                     </div>
                 </div>
                  <div className="text-xs text-muted-foreground text-center space-y-1">
-                    <Skeleton className="h-3 w-48" />
-                    <Skeleton className="h-3 w-40" />
+                    <Skeleton className="h-3 w-48 mx-auto" />
+                    <Skeleton className="h-3 w-40 mx-auto" />
                 </div>
             </CardContent>
         </Card>
