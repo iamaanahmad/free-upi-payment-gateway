@@ -93,14 +93,14 @@ export default function Home() {
 
 
   return (
-    <div className="container mx-auto px-4 md:px-6 py-12 flex items-center justify-center flex-col">
-       <Card className="w-full max-w-2xl shadow-lg">
-        <CardHeader className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+    <div className="container mx-auto px-4 md:px-6 py-8 md:py-12 flex items-center justify-center flex-col">
+       <Card className="w-full max-w-2xl shadow-lg border-2">
+        <CardHeader className="text-center space-y-3 pb-6">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             {t('title')}
           </h1>
-          <CardDescription className="max-w-xl mx-auto pt-2 text-base">
-            {t('description')} <Link href="/about" className="text-primary hover:underline">Learn more about UPI PG</Link>.
+          <CardDescription className="max-w-xl mx-auto text-base md:text-lg">
+            {t('description')} <Link href="/about" className="text-primary hover:underline font-medium">Learn more about UPI PG</Link>.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -214,39 +214,45 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      <section className="w-full max-w-4xl mt-16 text-center">
-        <h2 className="text-3xl font-bold tracking-tight">{t('powerTitle')}</h2>
-        <p className="mt-2 text-lg text-muted-foreground">
+      <section className="w-full max-w-4xl mt-12 md:mt-16 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t('powerTitle')}</h2>
+        <p className="mt-3 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
           {t('powerDescription')}
         </p>
-        <div className="mt-8 grid gap-8 md:grid-cols-3">
-          <div className="flex flex-col items-center">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary" aria-label={t('feature1Title')}><rect width="8" height="8" x="3" y="3" rx="1"/><path d="M7 11h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2Z"/><path d="M11 3v2"/><path d="M7 3v2"/><path d="m21 15-4-4"/><path d="M17 15h4v4"/><path d="M3 11v2"/><path d="M3 7h2"/></svg>
-            <h3 className="mt-4 text-xl font-semibold">{t('feature1Title')}</h3>
-            <p className="mt-1 text-muted-foreground">
+        <div className="mt-8 md:mt-10 grid gap-6 md:gap-8 sm:grid-cols-2 md:grid-cols-3">
+          <div className="flex flex-col items-center p-6 rounded-lg bg-card border hover:shadow-md transition-shadow">
+            <div className="p-3 rounded-full bg-primary/10">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-primary" aria-label={t('feature1Title')}><rect width="8" height="8" x="3" y="3" rx="1"/><path d="M7 11h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2Z"/><path d="M11 3v2"/><path d="M7 3v2"/><path d="m21 15-4-4"/><path d="M17 15h4v4"/><path d="M3 11v2"/><path d="M3 7h2"/></svg>
+            </div>
+            <h3 className="mt-4 text-lg md:text-xl font-semibold">{t('feature1Title')}</h3>
+            <p className="mt-2 text-sm md:text-base text-muted-foreground">
               {t('feature1Description')}
             </p>
           </div>
-          <div className="flex flex-col items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary" aria-label={t('feature2Title')}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
-            <h3 className="mt-4 text-xl font-semibold">{t('feature2Title')}</h3>
-            <p className="mt-1 text-muted-foreground">
+          <div className="flex flex-col items-center p-6 rounded-lg bg-card border hover:shadow-md transition-shadow">
+            <div className="p-3 rounded-full bg-primary/10">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-primary" aria-label={t('feature2Title')}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            </div>
+            <h3 className="mt-4 text-lg md:text-xl font-semibold">{t('feature2Title')}</h3>
+            <p className="mt-2 text-sm md:text-base text-muted-foreground">
               {t('feature2Description')}
             </p>
           </div>
-          <div className="flex flex-col items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 text-primary" aria-label={t('feature3Title')}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
-            <h3 className="mt-4 text-xl font-semibold">{t('feature3Title')}</h3>
-            <p className="mt-1 text-muted-foreground">
-              {t('feature3Description')} <Link href="/developers" className="text-primary hover:underline">Learn about developer integrations</Link>.
+          <div className="flex flex-col items-center p-6 rounded-lg bg-card border hover:shadow-md transition-shadow">
+            <div className="p-3 rounded-full bg-primary/10">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-primary" aria-label={t('feature3Title')}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+            </div>
+            <h3 className="mt-4 text-lg md:text-xl font-semibold">{t('feature3Title')}</h3>
+            <p className="mt-2 text-sm md:text-base text-muted-foreground">
+              {t('feature3Description')} <Link href="/developers" className="text-primary hover:underline font-medium">Learn about developer integrations</Link>.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="w-full max-w-4xl mt-16">
-        <h2 className="text-3xl font-bold tracking-tight text-center">{t('faqTitle')}</h2>
-        <Accordion type="single" collapsible className="w-full mt-8">
+      <section className="w-full max-w-4xl mt-12 md:mt-16">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-center">{t('faqTitle')}</h2>
+        <Accordion type="single" collapsible className="w-full mt-6 md:mt-8 bg-card border rounded-lg p-4">
             <AccordionItem value="item-1">
                 <AccordionTrigger>{t('faq1Question')}</AccordionTrigger>
                 <AccordionContent>
@@ -274,23 +280,23 @@ export default function Home() {
         </Accordion>
       </section>
 
-      <section className="w-full max-w-4xl mt-16 text-center">
-        <h2 className="text-3xl font-bold tracking-tight">Explore UPI PG</h2>
-        <p className="mt-2 text-lg text-muted-foreground">
+      <section className="w-full max-w-4xl mt-12 md:mt-16 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Explore UPI PG</h2>
+        <p className="mt-3 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
           Discover more ways to use UPI PG for your payment needs
         </p>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <Link href="/about" className="block p-6 border rounded-lg hover:shadow-md transition-shadow">
-            <h3 className="text-xl font-semibold mb-2">About UPI PG</h3>
-            <p className="text-muted-foreground">Learn about our mission and how we make payments simple across India.</p>
+        <div className="mt-8 md:mt-10 grid gap-4 md:gap-6 sm:grid-cols-2 md:grid-cols-3">
+          <Link href="/about" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
+            <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">About UPI PG</h3>
+            <p className="text-sm md:text-base text-muted-foreground">Learn about our mission and how we make payments simple across India.</p>
           </Link>
-          <Link href="/developers" className="block p-6 border rounded-lg hover:shadow-md transition-shadow">
-            <h3 className="text-xl font-semibold mb-2">For Developers</h3>
-            <p className="text-muted-foreground">Integrate UPI payments into your website or application with our developer tools.</p>
+          <Link href="/developers" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
+            <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">For Developers</h3>
+            <p className="text-sm md:text-base text-muted-foreground">Integrate UPI payments into your website or application with our developer tools.</p>
           </Link>
-          <Link href="/embed" className="block p-6 border rounded-lg hover:shadow-md transition-shadow">
-            <h3 className="text-xl font-semibold mb-2">Embed Widget</h3>
-            <p className="text-muted-foreground">Add a payment form to your website with our simple embeddable widget.</p>
+          <Link href="/embed" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all sm:col-span-2 md:col-span-1">
+            <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Embed Widget</h3>
+            <p className="text-sm md:text-base text-muted-foreground">Add a payment form to your website with our simple embeddable widget.</p>
           </Link>
         </div>
       </section>

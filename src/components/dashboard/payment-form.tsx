@@ -104,10 +104,10 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
   };
 
   return (
-    <Card>
+    <Card className="shadow-md sticky top-20">
       <CardHeader>
-        <CardTitle>{t('createTitle')}</CardTitle>
-        <CardDescription>{t('createDescription')}</CardDescription>
+        <CardTitle className="text-2xl">{t('createTitle')}</CardTitle>
+        <CardDescription className="text-base">{t('createDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

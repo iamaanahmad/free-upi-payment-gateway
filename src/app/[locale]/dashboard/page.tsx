@@ -42,12 +42,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6 lg:p-8">
-      <div className="grid gap-8 md:grid-cols-3">
-        <div className="md:col-span-1">
+    <div className="container mx-auto p-4 md:p-6 lg:p-8 min-h-[calc(100vh-8rem)]">
+      <h1 className="text-3xl md:text-4xl font-bold mb-6 md:mb-8">Dashboard</h1>
+      <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-1">
           <PaymentForm user={user} onPaymentGenerated={setActivePayment} />
         </div>
-        <div className="md:col-span-2">
+        <div className="lg:col-span-2">
           <PaymentHistory userId={user.uid} />
         </div>
       </div>

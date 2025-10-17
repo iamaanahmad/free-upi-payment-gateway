@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   const t = useTranslations('AboutPage');
   return (
-    <div className="container mx-auto px-4 md:px-6 py-12">
-      <Card className="max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-3xl">{t('title')}</CardTitle>
-          <CardDescription>{t('description')}</CardDescription>
+    <div className="container mx-auto px-4 md:px-6 py-8 md:py-12">
+      <Card className="max-w-4xl mx-auto shadow-lg border-2">
+        <CardHeader className="space-y-3">
+          <CardTitle className="text-3xl md:text-4xl">{t('title')}</CardTitle>
+          <CardDescription className="text-base">{t('description')}</CardDescription>
         </CardHeader>
-        <CardContent className="prose prose-stone dark:prose-invert max-w-none text-foreground">
+        <CardContent className="prose prose-stone dark:prose-invert max-w-none text-foreground space-y-4">
             <p>{t('p1')}</p>
             <p>{t('p2')}</p>
             <h3 className="text-xl font-semibold">{t('keyFeaturesTitle')}</h3>

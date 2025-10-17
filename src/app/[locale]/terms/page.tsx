@@ -2,13 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 
 export default function TermsPage() {
   return (
-    <div className="container mx-auto px-4 md:px-6 py-12">
-      <Card className="max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-3xl">Terms of Service</CardTitle>
-          <CardDescription>Last updated: {new Date().toLocaleDateString()}</CardDescription>
+    <div className="container mx-auto px-4 md:px-6 py-8 md:py-12">
+      <Card className="max-w-4xl mx-auto shadow-lg border-2">
+        <CardHeader className="space-y-3">
+          <CardTitle className="text-3xl md:text-4xl">Terms of Service</CardTitle>
+          <CardDescription className="text-base">Last updated: {new Date().toLocaleDateString()}</CardDescription>
         </CardHeader>
-        <CardContent className="prose prose-stone dark:prose-invert max-w-none text-foreground">
+        <CardContent className="prose prose-stone dark:prose-invert max-w-none text-foreground space-y-4">
             <p>Please read these Terms of Service ("Terms", "Terms of Service") carefully before using the UPI PG website (the "Service") operated by us.</p>
             
             <p>Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.</p>

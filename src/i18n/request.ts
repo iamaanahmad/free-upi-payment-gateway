@@ -60,7 +60,8 @@ export default getRequestConfig(async ({locale}) => {
 
   return {
     locale,
-    messages
+    messages,
+    timeZone: 'Asia/Kolkata', // Indian Standard Time
   };
 });
 

@@ -107,10 +107,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>{t('title')}</CardTitle>
-        <CardDescription>{t('description')}</CardDescription>
+    <Card className="w-full max-w-md shadow-lg border-2">
+      <CardHeader className="space-y-2">
+        <CardTitle className="text-2xl md:text-3xl">{t('title')}</CardTitle>
+        <CardDescription className="text-base">{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

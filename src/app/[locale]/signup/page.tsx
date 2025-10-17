@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 
 export default function SignupPage() {
   return (
-    <div className="flex items-center justify-center p-4 py-12">
+    <div className="flex items-center justify-center min-h-[calc(100vh-8rem)] p-4 py-8 md:py-12">
       <AuthForm mode="signup" />
     </div>
   );

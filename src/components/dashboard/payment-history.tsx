@@ -73,10 +73,10 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
   };
 
   return (
-    <Card>
+    <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>{t('historyTitle')}</CardTitle>
-        <CardDescription>{t('historyDescription')}</CardDescription>
+        <CardTitle className="text-2xl">{t('historyTitle')}</CardTitle>
+        <CardDescription className="text-base">{t('historyDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
         {loading && (
@@ -94,16 +94,16 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
         )}
         <div className="space-y-4">
           {payments && payments.map((p) => (
-            <div key={p.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-card transition-colors">
-                <div className="grid gap-1">
-                    <p className="font-semibold text-lg">₹{p.amount.toFixed(2)} {t('paymentTo', {name: p.name})}</p>
-                    <p className="text-sm text-muted-foreground">{p.upiId}</p>
-                     <p className="text-xs text-muted-foreground italic">{p.notes}</p>
+            <div key={p.id} className="flex items-center justify-between p-4 md:p-5 border-2 rounded-lg hover:border-primary/50 hover:shadow-md transition-all bg-card">
+                <div className="grid gap-1.5 flex-1 min-w-0">
+                    <p className="font-semibold text-base md:text-lg truncate">₹{p.amount.toFixed(2)} {t('paymentTo', {name: p.name})}</p>
+                    <p className="text-sm text-muted-foreground truncate">{p.upiId}</p>
+                     {p.notes && <p className="text-xs text-muted-foreground italic line-clamp-2">{p.notes}</p>}
                     <p className="text-xs text-muted-foreground">
                         {p.timestamp ? format(new Date((p.timestamp as any).toDate ? (p.timestamp as any).toDate() : p.timestamp), 'MMM d, yyyy, h:mm a') : '...'}
                     </p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
                   {getStatusBadge(p.status)}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

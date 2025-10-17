@@ -6,7 +6,8 @@ import { ClientLayout } from '@/components/client-layout';
 import { StructuredData } from '@/components/seo/structured-data';
 import { IntlProvider } from '@/components/intl-provider';
 
-export function generateMetadata({ params: { locale } }: { params: { locale: string } }): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
   const baseUrl = 'https://upipg.cit.org.in';
   const canonicalUrl = locale === 'en' ? baseUrl : `${baseUrl}/${locale}`;
 
@@ -72,15 +73,16 @@ export function generateMetadata({ params: { locale } }: { params: { locale: str
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-  params: {locale}
+  params
 }: Readonly<RootLayoutProps>) {
+  const { locale } = await params;
   
   if (!locales.includes(locale)) {
     notFound();
