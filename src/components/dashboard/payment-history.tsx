@@ -35,7 +35,7 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
   const locale = useLocale();
 
   const paymentsQuery = useMemoFirebase(() => {
-    if (!userId) return null;
+    if (!userId || !firestore) return null;
     return query(collection(firestore, `users/${userId}/paymentRequests`), orderBy("timestamp", "desc"));
   }, [firestore, userId]);
   

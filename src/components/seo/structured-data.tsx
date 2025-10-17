@@ -125,7 +125,7 @@ export function StructuredData({ locale, pageType = 'website' }: StructuredDataP
     "screenshot": `${baseUrl}/og-image.png`
   };
 
-  const schemas = [organizationSchema, websiteSchema, softwareSchema];
+  const schemas: any[] = [organizationSchema, websiteSchema, softwareSchema];
   if (faqSchema) schemas.push(faqSchema);
 
   return (
@@ -133,7 +133,7 @@ export function StructuredData({ locale, pageType = 'website' }: StructuredDataP
       id="structured-data"
       type="application/ld+json"
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify(schemas)
+        __html: JSON.stringify(schemas as any)
       }}
     />
   );
