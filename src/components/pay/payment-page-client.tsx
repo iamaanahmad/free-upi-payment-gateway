@@ -198,7 +198,7 @@ export default function PaymentPageClient() {
             </div>
             <Separator className="w-full" />
             <div className="text-center text-xs text-muted-foreground space-y-2">
-                <Link href="/" className="text-sm text-primary hover:underline">
+                <Link href="." className="text-sm text-primary hover:underline">
                     {t('createYourOwnLink')}
                 </Link>
                 <p>{t('poweredBy')}</p>

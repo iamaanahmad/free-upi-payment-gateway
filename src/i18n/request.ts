@@ -48,18 +48,24 @@ const messagesMap = {
   'pa-IN': paIN,
 };
 
-export default getRequestConfig(async ({locale}) => {
-  if (!locales.includes(locale as any)) notFound();
+export default getRequestConfig(async ({requestLocale}) => {
+  // Await the requestLocale function
+  const locale = await requestLocale;
+
+  // Fallback to 'en' if locale is undefined
+  const resolvedLocale = locale || 'en';
+
+  if (!locales.includes(resolvedLocale as any)) notFound();
 
   // Merge locale messages with English as fallback
-  const localeMessages = messagesMap[locale as keyof typeof messagesMap] || {};
+  const localeMessages = messagesMap[resolvedLocale as keyof typeof messagesMap] || {};
   const messages = {
     ...en, // English as base
     ...localeMessages // Override with locale-specific translations
   };
 
   return {
-    locale,
+    locale: resolvedLocale,
     messages,
     timeZone: 'Asia/Kolkata', // Indian Standard Time
   };

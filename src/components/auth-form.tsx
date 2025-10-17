@@ -162,14 +162,14 @@ export default function AuthForm({ mode }: AuthFormProps) {
           {mode === 'login' ? (
             <>
               {t('signupPrompt')}
-              <Link href="/signup" className="underline text-primary">
+              <Link href="signup" className="underline text-primary">
                 {t('signupLink')}
               </Link>
             </>
           ) : (
             <>
               {t('loginPrompt')}
-              <Link href="/login" className="underline text-primary">
+              <Link href="login" className="underline text-primary">
                 {t('loginLink')}
               </Link>
             </>

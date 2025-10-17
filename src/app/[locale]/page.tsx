@@ -100,7 +100,7 @@ export default function Home() {
             {t('title')}
           </h1>
           <CardDescription className="max-w-xl mx-auto text-base md:text-lg">
-            {t('description')} <Link href="/about" className="text-primary hover:underline font-medium">Learn more about UPI PG</Link>.
+            {t('description')} <Link href="about" className="text-primary hover:underline font-medium">Learn more about UPI PG</Link>.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -244,7 +244,7 @@ export default function Home() {
             </div>
             <h3 className="mt-4 text-lg md:text-xl font-semibold">{t('feature3Title')}</h3>
             <p className="mt-2 text-sm md:text-base text-muted-foreground">
-              {t('feature3Description')} <Link href="/developers" className="text-primary hover:underline font-medium">Learn about developer integrations</Link>.
+              {t('feature3Description')} <Link href="developers" className="text-primary hover:underline font-medium">Learn about developer integrations</Link>.
             </p>
           </div>
         </div>
@@ -286,15 +286,15 @@ export default function Home() {
           Discover more ways to use UPI PG for your payment needs
         </p>
         <div className="mt-8 md:mt-10 grid gap-4 md:gap-6 sm:grid-cols-2 md:grid-cols-3">
-          <Link href="/about" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
+          <Link href="about" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
             <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">About UPI PG</h3>
             <p className="text-sm md:text-base text-muted-foreground">Learn about our mission and how we make payments simple across India.</p>
           </Link>
-          <Link href="/developers" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
+          <Link href="developers" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
             <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">For Developers</h3>
             <p className="text-sm md:text-base text-muted-foreground">Integrate UPI payments into your website or application with our developer tools.</p>
           </Link>
-          <Link href="/embed" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all sm:col-span-2 md:col-span-1">
+          <Link href="embed" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all sm:col-span-2 md:col-span-1">
             <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Embed Widget</h3>
             <p className="text-sm md:text-base text-muted-foreground">Add a payment form to your website with our simple embeddable widget.</p>
           </Link>

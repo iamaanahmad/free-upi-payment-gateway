@@ -46,7 +46,15 @@
     "faq3Question": "Can I generate a UPI QR code without an amount?",
     "faq3Answer": "Currently, our tool is designed as a UPI QR code generator with amount included to simplify the payment process for Indian merchants and businesses. You must specify an amount to generate a link.",
     "faq4Question": "Is this an official NPCI or BHIM UPI QR code generator?",
-    "faq4Answer": "We are an independent platform that uses the standard UPI protocol defined by NPCI. We provide a simple interface to create payment links and QR codes that work across the entire Indian UPI ecosystem including all banks and UPI apps."
+    "faq4Answer": "We are an independent platform that uses the standard UPI protocol defined by NPCI. We provide a simple interface to create payment links and QR codes that work across the entire Indian UPI ecosystem including all banks and UPI apps.",
+    "exploreTitle": "Explore UPI PG",
+    "exploreDescription": "Discover more ways to use UPI PG for your payment needs",
+    "exploreAboutTitle": "About UPI PG",
+    "exploreAboutDescription": "Learn about our mission and how we make payments simple across India.",
+    "exploreDevelopersTitle": "For Developers",
+    "exploreDevelopersDescription": "Integrate UPI payments into your website or application with our developer tools.",
+    "exploreEmbedTitle": "Embed Widget",
+    "exploreEmbedDescription": "Add a payment form to your website with our simple embeddable widget."
   },
   "AboutPage": {
     "title": "About UPI PG - India's Leading Free UPI Payment Solution",
