@@ -36,7 +36,7 @@ export default function Header() {
   return (
     <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="." className="flex items-center gap-2 text-xl font-bold text-primary hover:opacity-80 transition-opacity">
+        <Link href={`/${locale}`} className="flex items-center gap-2 text-xl font-bold text-primary hover:opacity-80 transition-opacity">
           <Image src="/logo.png" alt="UPI PG Logo" width={28} height={28} className="h-7 w-7" />
           {t('title')} <Badge variant="default" className="text-xs px-2 py-0.5 ml-1">{t('subtitle')}</Badge>
         </Link>
@@ -78,10 +78,10 @@ export default function Header() {
           ) : (
             <div className="flex gap-2">
               <Button asChild variant="ghost">
-                <Link href="login">{t('login')}</Link>
+                <Link href={`/${locale}/login`}>{t('login')}</Link>
               </Button>
               <Button asChild>
-                <Link href="signup">{t('signup')}</Link>
+                <Link href={`/${locale}/signup`}>{t('signup')}</Link>
               </Button>
             </div>
           )}

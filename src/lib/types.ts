@@ -5,7 +5,7 @@ export interface PaymentRequest {
   userId: string | null; // Can be null for public links
   name: string;
   upiId: string;
-  amount: number;
+  amount: number | null; // Can be null for flexible amount payments
   notes?: string;
   status: 'pending' | 'completed' | 'failed';
   timestamp: Timestamp | Date;

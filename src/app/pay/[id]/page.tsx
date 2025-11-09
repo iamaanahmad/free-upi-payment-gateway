@@ -41,11 +41,11 @@ export async function generateMetadata({ params, searchParams }: PayPageProps): 
     const payment = docSnap.data() as PaymentRequest;
 
     return {
-      title: `Payment Request from ${payment.name} for ₹${payment.amount.toFixed(2)} | UPI PG`,
-      description: `${payment.name} is requesting a payment of ₹${payment.amount.toFixed(2)}. ${payment.notes ? `Note: ${payment.notes}` : ''} Pay securely using any UPI app.`,
+      title: `Payment Request from ${payment.name}${payment.amount ? ` for ₹${payment.amount.toFixed(2)}` : ''} | UPI PG`,
+      description: `${payment.name} is requesting a payment${payment.amount ? ` of ₹${payment.amount.toFixed(2)}` : ''}. ${payment.notes ? `Note: ${payment.notes}` : ''} Pay securely using any UPI app.`,
       openGraph: {
         title: `Payment Request from ${payment.name}`,
-        description: `${payment.name} is requesting ₹${payment.amount.toFixed(2)}. ${payment.notes || 'Pay securely with UPI.'}`,
+        description: `${payment.name} is requesting${payment.amount ? ` ₹${payment.amount.toFixed(2)}` : ' a payment'}. ${payment.notes || 'Pay securely with UPI.'}`,
         type: 'website',
         images: [
           {
@@ -59,7 +59,7 @@ export async function generateMetadata({ params, searchParams }: PayPageProps): 
       twitter: {
         card: 'summary_large_image',
         title: `Payment Request from ${payment.name}`,
-        description: `${payment.name} is requesting ₹${payment.amount.toFixed(2)}. ${payment.notes || 'Pay securely with UPI.'}`,
+        description: `${payment.name} is requesting${payment.amount ? ` ₹${payment.amount.toFixed(2)}` : ' a payment'}. ${payment.notes || 'Pay securely with UPI.'}`,
         images: [`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(payment.upiLink)}`],
       },
       robots: {

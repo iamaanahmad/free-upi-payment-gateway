@@ -21,12 +21,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import {useTranslations} from 'next-intl';
+import {useTranslations, useLocale} from 'next-intl';
 
 export default function Home() {
   const t = useTranslations('HomePage');
   const t_errors = useTranslations('Errors');
   const t_toasts = useTranslations('Toasts');
+  const locale = useLocale();
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -36,7 +37,7 @@ export default function Home() {
   const formSchema = z.object({
     name: z.string().min(1, { message: t_errors('nameRequired') }),
     upiId: z.string().min(5, { message: t_errors('upiIdRequired') }).regex(/@/, { message: t_errors('upiIdInvalid') }),
-    amount: z.coerce.number().positive({ message: t_errors('amountPositive') }),
+    amount: z.coerce.number().positive({ message: t_errors('amountPositive') }).optional().or(z.literal('')),
     notes: z.string().optional(),
     expiry: z.date().optional(),
   });
@@ -46,7 +47,7 @@ export default function Home() {
     defaultValues: {
       name: "",
       upiId: "",
-      amount: undefined,
+      amount: '' as any,
       notes: "",
       expiry: undefined,
     },
@@ -62,7 +63,8 @@ export default function Home() {
 
     try {
       const { upiId, amount, name, notes, expiry } = values;
-      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(notes || 'Payment')}`;
+      const amountValue = amount && String(amount) !== '' ? Number(amount) : null;
+      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}${amountValue && amountValue > 0 ? `&am=${amountValue}` : ''}&cu=INR&tn=${encodeURIComponent(notes || 'Payment')}`;
       
       const collectionPath = user ? `users/${user.uid}/paymentRequests` : 'publicPaymentRequests';
       const paymentsRef = collection(firestore, collectionPath);
@@ -71,7 +73,7 @@ export default function Home() {
         userId: user?.uid || null,
         name,
         upiId,
-        amount,
+        amount: amountValue,
         notes: notes || "",
         status: "pending",
         timestamp: serverTimestamp(),
@@ -81,7 +83,7 @@ export default function Home() {
 
       if (docRef?.id) {
         toast({ title: t_toasts('linkGenerated') });
-        router.push(`/pay/${docRef.id}${user ? '' : '?public=true'}`);
+        router.push(`/${locale}/pay/${docRef.id}${user ? '' : '?public=true'}`);
       }
     } catch (error) {
       console.error(error);
@@ -100,7 +102,7 @@ export default function Home() {
             {t('title')}
           </h1>
           <CardDescription className="max-w-xl mx-auto text-base md:text-lg">
-            {t('description')} <Link href="about" className="text-primary hover:underline font-medium">Learn more about UPI PG</Link>.
+            {t('description')} <Link href={`/${locale}/about`} className="text-primary hover:underline font-medium">Learn more about UPI PG</Link>.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -140,9 +142,9 @@ export default function Home() {
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('amountLabel')}</FormLabel>
+                      <FormLabel>{t('amountLabel')} ({t('optional')})</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder={t('amountPlaceholder')} {...field} value={field.value || ''} step="0.01" />
+                        <Input type="number" placeholder={t('amountPlaceholder')} {...field} value={field.value ?? ''} step="0.01" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -244,7 +246,7 @@ export default function Home() {
             </div>
             <h3 className="mt-4 text-lg md:text-xl font-semibold">{t('feature3Title')}</h3>
             <p className="mt-2 text-sm md:text-base text-muted-foreground">
-              {t('feature3Description')} <Link href="developers" className="text-primary hover:underline font-medium">Learn about developer integrations</Link>.
+              {t('feature3Description')} <Link href={`/${locale}/developers`} className="text-primary hover:underline font-medium">Learn about developer integrations</Link>.
             </p>
           </div>
         </div>
@@ -286,15 +288,15 @@ export default function Home() {
           Discover more ways to use UPI PG for your payment needs
         </p>
         <div className="mt-8 md:mt-10 grid gap-4 md:gap-6 sm:grid-cols-2 md:grid-cols-3">
-          <Link href="about" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
+          <Link href={`/${locale}/about`} className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
             <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">About UPI PG</h3>
             <p className="text-sm md:text-base text-muted-foreground">Learn about our mission and how we make payments simple across India.</p>
           </Link>
-          <Link href="developers" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
+          <Link href={`/${locale}/developers`} className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all">
             <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">For Developers</h3>
             <p className="text-sm md:text-base text-muted-foreground">Integrate UPI payments into your website or application with our developer tools.</p>
           </Link>
-          <Link href="embed" className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all sm:col-span-2 md:col-span-1">
+          <Link href={`/${locale}/embed`} className="group block p-6 bg-card border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all sm:col-span-2 md:col-span-1">
             <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Embed Widget</h3>
             <p className="text-sm md:text-base text-muted-foreground">Add a payment form to your website with our simple embeddable widget.</p>
           </Link>

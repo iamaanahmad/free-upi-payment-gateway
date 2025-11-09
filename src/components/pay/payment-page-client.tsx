@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { doc } from "firebase/firestore";
 import Image from "next/image";
@@ -10,6 +10,7 @@ import type { PaymentRequest } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Share2, AlertCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -57,6 +58,8 @@ export default function PaymentPageClient() {
   const { toast } = useToast();
   const firestore = useFirestore();
   const { user } = useUser();
+  const [customAmount, setCustomAmount] = useState<string>('');
+  const [tempQrUrl, setTempQrUrl] = useState<string>('');
 
   const paymentId = params.id as string;
   const isPublic = searchParams.get("public") === 'true';
@@ -77,7 +80,10 @@ export default function PaymentPageClient() {
 
   useEffect(() => {
     if (payment) {
-        document.title = `Payment Request from ${payment.name} for ₹${payment.amount.toFixed(2)}`;
+        const title = typeof payment.amount === 'number' && payment.amount > 0
+          ? `Payment Request from ${payment.name} for ₹${payment.amount.toFixed(2)}`
+          : `Payment Request from ${payment.name}`;
+        document.title = title;
     }
   }, [payment]);
 
@@ -86,15 +92,39 @@ export default function PaymentPageClient() {
     return `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(payment.upiLink)}`;
   }, [payment?.upiLink]);
 
+  const currentUpiLink = useMemo(() => {
+    if (!payment) return '';
+    if (customAmount && parseFloat(customAmount) > 0) {
+      const amount = parseFloat(customAmount);
+      return `upi://pay?pa=${payment.upiId}&pn=${encodeURIComponent(payment.name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(payment.notes || 'Payment')}`;
+    }
+    return payment.upiLink;
+  }, [payment, customAmount]);
+
+  const handleAmountChange = (value: string) => {
+    setCustomAmount(value);
+    if (value && parseFloat(value) > 0 && payment) {
+      const amount = parseFloat(value);
+      const tempLink = `upi://pay?pa=${payment.upiId}&pn=${encodeURIComponent(payment.name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(payment.notes || 'Payment')}`;
+      const tempQr = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(tempLink)}`;
+      setTempQrUrl(tempQr);
+    } else {
+      setTempQrUrl('');
+    }
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({ title: t_toasts('linkCopied') });
   };
   
   const handleShare = async () => {
+    const amountText = typeof payment?.amount === 'number' && payment.amount > 0
+      ? ` of ₹${payment.amount.toFixed(2)}`
+      : '';
     const shareData = {
       title: "UPI Payment Request",
-      text: `${payment?.name} is requesting a payment of ₹${payment?.amount.toFixed(2)}.`,
+      text: `${payment?.name} is requesting a payment${amountText}.`,
       url: window.location.href,
     };
     if (navigator.share && navigator.canShare(shareData)) {
@@ -159,18 +189,36 @@ export default function PaymentPageClient() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-6">
-            <div className="text-center">
-                <p className="text-5xl font-bold tracking-tight">₹{payment.amount.toFixed(2)}</p>
-                <p className="text-muted-foreground">{payment.notes}</p>
+            <div className="text-center w-full">
+                {typeof payment.amount === 'number' && payment.amount > 0 ? (
+                  <p className="text-5xl font-bold tracking-tight">₹{payment.amount.toFixed(2)}</p>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-lg font-semibold text-muted-foreground">{t('enterAmount')}</p>
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-3xl font-bold">₹</span>
+                      <Input 
+                        type="number" 
+                        placeholder="0.00" 
+                        value={customAmount}
+                        onChange={(e) => handleAmountChange(e.target.value)}
+                        className="text-3xl font-bold text-center w-48 h-14"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                )}
+                {payment.notes && <p className="text-muted-foreground mt-2">{payment.notes}</p>}
             </div>
 
           <div className="p-2 bg-white rounded-lg border shadow-md">
-            {qrCodeUrl && <Image src={qrCodeUrl} alt={`UPI QR Code for payment to ${payment.name}`} width={256} height={256} />}
+            {(tempQrUrl || qrCodeUrl) && <Image src={tempQrUrl || qrCodeUrl} alt={`UPI QR Code for payment to ${payment.name}`} width={256} height={256} key={tempQrUrl || qrCodeUrl} />}
           </div>
 
            <div className="w-full space-y-4">
-                <Button asChild className="w-full text-lg py-6">
-                    <a href={payment.upiLink}>
+                <Button asChild className="w-full text-lg py-6" disabled={!payment.amount && (!customAmount || parseFloat(customAmount) <= 0)}>
+                    <a href={currentUpiLink}>
                         {t('payButton')}
                     </a>
                 </Button>
@@ -198,7 +246,7 @@ export default function PaymentPageClient() {
             </div>
             <Separator className="w-full" />
             <div className="text-center text-xs text-muted-foreground space-y-2">
-                <Link href="." className="text-sm text-primary hover:underline">
+                <Link href={`/${params.locale || 'en'}`} className="text-sm text-primary hover:underline">
                     {t('createYourOwnLink')}
                 </Link>
                 <p>{t('poweredBy')}</p>

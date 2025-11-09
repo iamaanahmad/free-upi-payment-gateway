@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { doc } from "firebase/firestore";
 import Image from "next/image";
@@ -10,6 +10,7 @@ import type { PaymentRequest } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Share2, AlertCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -29,6 +30,7 @@ export default function PayPageClient({ payment, paymentId, isPublic }: PayPageC
   const { toast } = useToast();
   const firestore = useFirestore();
   const { user } = useUser();
+  const [tempAmount, setTempAmount] = useState<number | undefined>(undefined);
 
   const docRef = useMemoFirebase(() => {
     if (!firestore || !paymentId) return null;
@@ -50,10 +52,19 @@ export default function PayPageClient({ payment, paymentId, isPublic }: PayPageC
   // Use server-fetched payment data if available, otherwise use client-fetched data
   const currentPayment = paymentData || payment;
 
+  // Generate dynamic UPI link with temp amount if provided
+  const dynamicUpiLink = useMemo(() => {
+    if (!currentPayment?.upiId || !currentPayment?.name) return currentPayment?.upiLink || "";
+    
+    const amount = tempAmount ?? currentPayment.amount;
+    const amountParam = amount ? `&am=${amount}` : '';
+    return `upi://pay?pa=${currentPayment.upiId}&pn=${encodeURIComponent(currentPayment.name)}${amountParam}&cu=INR&tn=${encodeURIComponent(currentPayment.notes || 'Payment')}`;
+  }, [currentPayment, tempAmount]);
+
   const qrCodeUrl = useMemo(() => {
-    if (!currentPayment?.upiLink) return "";
-    return `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(currentPayment.upiLink)}`;
-  }, [currentPayment?.upiLink]);
+    if (!dynamicUpiLink) return "";
+    return `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(dynamicUpiLink)}`;
+  }, [dynamicUpiLink]);
 
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
@@ -63,7 +74,7 @@ export default function PayPageClient({ payment, paymentId, isPublic }: PayPageC
   const handleShare = async () => {
     const shareData = {
       title: "UPI Payment Request",
-      text: `${currentPayment?.name} is requesting a payment of ₹${currentPayment?.amount.toFixed(2)}.`,
+      text: `${currentPayment?.name} is requesting a payment${currentPayment?.amount ? ` of ₹${currentPayment.amount.toFixed(2)}` : ''}.`,
       url: window.location.href,
     };
     if (navigator.share && navigator.canShare(shareData)) {
@@ -126,9 +137,30 @@ export default function PayPageClient({ payment, paymentId, isPublic }: PayPageC
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-6">
-            <div className="text-center">
-                <p className="text-5xl font-bold tracking-tight">₹{currentPayment.amount.toFixed(2)}</p>
-                <p className="text-muted-foreground">{currentPayment.notes}</p>
+            <div className="text-center w-full">
+                {currentPayment.amount ? (
+                  <div>
+                    <p className="text-5xl font-bold tracking-tight">₹{currentPayment.amount.toFixed(2)}</p>
+                    <p className="text-muted-foreground">{currentPayment.notes}</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-sm font-semibold text-muted-foreground">Enter amount to pay</p>
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        placeholder="0.00"
+                        value={tempAmount || ''}
+                        onChange={(e) => setTempAmount(e.target.value ? parseFloat(e.target.value) : undefined)}
+                        min="0"
+                        step="0.01"
+                        className="text-center text-lg font-semibold"
+                      />
+                      <div className="text-3xl font-bold text-muted-foreground pt-2">₹</div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{currentPayment.notes}</p>
+                  </div>
+                )}
             </div>
 
           <div className="p-2 bg-white rounded-lg border shadow-md">
@@ -136,8 +168,8 @@ export default function PayPageClient({ payment, paymentId, isPublic }: PayPageC
           </div>
 
            <div className="w-full space-y-4">
-                <Button asChild className="w-full text-lg py-6">
-                    <a href={currentPayment.upiLink}>
+                <Button asChild className="w-full text-lg py-6" disabled={!currentPayment.amount && !tempAmount}>
+                    <a href={dynamicUpiLink}>
                         Pay with any UPI App
                     </a>
                 </Button>
