@@ -96,7 +96,7 @@ export default function PaymentHistory({ userId }: PaymentHistoryProps) {
           {payments && payments.map((p) => (
             <div key={p.id} className="flex items-center justify-between p-4 md:p-5 border-2 rounded-lg hover:border-primary/50 hover:shadow-md transition-all bg-card">
                 <div className="grid gap-1.5 flex-1 min-w-0">
-                    <p className="font-semibold text-base md:text-lg truncate">₹{p.amount.toFixed(2)} {t('paymentTo', {name: p.name})}</p>
+                    <p className="font-semibold text-base md:text-lg truncate">₹{p.amount ? p.amount.toFixed(2) : 'N/A'} {t('paymentTo', {name: p.name})}</p>
                     <p className="text-sm text-muted-foreground truncate">{p.upiId}</p>
                      {p.notes && <p className="text-xs text-muted-foreground italic line-clamp-2">{p.notes}</p>}
                     <p className="text-xs text-muted-foreground">
