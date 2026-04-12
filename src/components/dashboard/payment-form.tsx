@@ -16,6 +16,7 @@ import { PaymentRequest } from "@/lib/types";
 import { useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { Textarea } from "../ui/textarea";
 import {useTranslations} from 'next-intl';
+import { trackEvent } from "@/lib/analytics";
 
 interface PaymentFormProps {
   user: User;
@@ -97,6 +98,14 @@ export default function PaymentForm({ user, onPaymentGenerated }: PaymentFormPro
         upiId: ''
       });
       toast({ title: t_toasts('linkGenerated') });
+      
+      // Track payment link generation in Google Analytics
+      trackEvent({
+        action: 'generate_payment_link',
+        category: 'Payment',
+        label: 'UPI Payment Link',
+        value: amount
+      });
     } catch (error) {
     } finally {
       setLoading(false);
