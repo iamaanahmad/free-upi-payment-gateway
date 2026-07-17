@@ -18,7 +18,7 @@ export const localeNames: {[key: string]: string} = {
   'pa-IN': 'ਪੰਜਾਬੀ'
 };
 
-export const localePrefix: LocalePrefix = 'always';
+export const localePrefix: LocalePrefix = 'as-needed';
 
 import en from './messages/en.json';
 import hi from './messages/hi.json';

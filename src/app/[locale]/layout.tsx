@@ -19,23 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: 'Instantly generate free, shareable UPI payment links and QR codes with custom amounts and notes. India\'s best UPI QR code generator for freelancers, small businesses, and individuals. Works with Google Pay, PhonePe, Paytm, BHIM UPI, and all Indian banks. No login required.',
     keywords: "UPI QR code generator India, UPI payment link, free UPI QR code, UPI QR with amount, BHIM UPI QR code, NPCI, Google Pay QR, PhonePe QR, Paytm QR, Indian payment link generator, digital payments India, UPI ID generator, rupee payment QR, Indian fintech, UPI deep links",
     metadataBase: new URL(baseUrl),
-    alternates: {
-      canonical: canonicalUrl,
-      languages: {
-        'en': '/',
-        'hi': '/hi',
-        'bn-IN': '/bn-IN',
-        'gu-IN': '/gu-IN',
-        'mr-IN': '/mr-IN',
-        'te-IN': '/te-IN',
-        'ta-IN': '/ta-IN',
-        'kn-IN': '/kn-IN',
-        'ml-IN': '/ml-IN',
-        'pa-IN': '/pa-IN',
-        'or-IN': '/or-IN',
-        'ur-IN': '/ur-IN',
-      },
-    },
+
     openGraph: {
       title: 'UPI PG - Free UPI Payment Link & QR Code Generator for India',
       description: 'India\'s simplest way to request UPI payments. Create instant, shareable payment pages and QR codes. Works with Google Pay, PhonePe, Paytm, BHIM UPI, and all Indian banks.',

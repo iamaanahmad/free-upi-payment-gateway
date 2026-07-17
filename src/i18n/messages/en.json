@@ -14,7 +14,8 @@
     "developers": "For Developers",
     "terms": "Terms",
     "privacy": "Privacy",
-    "embed": "Embed Widget"
+    "embed": "Embed Widget",
+    "github": "GitHub"
   },
   "HomePage": {
     "title": "Free UPI QR Code & Payment Link Generator for India",
@@ -31,8 +32,8 @@
     "expiryLabel": "Link Expiry Date (Optional)",
     "expiryPlaceholder": "Pick a date for the link to expire",
     "generateButton": "Generate Secure Payment Link & QR Code",
-    "powerTitle": "The Power of Simplicity for India's Digital Payments Revolution",
-    "powerDescription": "Receive payments without the complexity. Our platform leverages the full potential of BHIM UPI, NPCI's unified payments interface, for speed and ease of use across all Indian banks and UPI apps.",
+    "powerTitle": "The Ultimate UPI Generator & Payment Link Creator for India",
+    "powerDescription": "Receive payments without the complexity. As the best payment link generator specifically built for Indian UPI, our platform leverages the full potential of BHIM UPI for speed and ease of use across all Indian banks and apps.",
     "feature1Title": "QR Code with Amount Pre-filled",
     "feature1Description": "Generate a unique UPI QR code for your specific amount in rupees. Your payers just scan and pay instantly, no amount entry needed. Works with all UPI apps in India.",
     "feature2Title": "Secure & NPCI Compliant",
@@ -48,6 +49,8 @@
     "faq3Answer": "Currently, our tool is designed as a UPI QR code generator with amount included to simplify the payment process for Indian merchants and businesses. You must specify an amount to generate a link.",
     "faq4Question": "Is this an official NPCI or BHIM UPI QR code generator?",
     "faq4Answer": "We are an independent platform that uses the standard UPI protocol defined by NPCI. We provide a simple interface to create payment links and QR codes that work across the entire Indian UPI ecosystem including all banks and UPI apps.",
+    "faq5Question": "How to create a free UPI payment gateway for my business?",
+    "faq5Answer": "While traditional payment gateways charge high fees, our free UPI payment gateway alternative lets you generate dynamic UPI links and QR codes with zero transaction fees. Just enter your UPI ID and amount above to create instant, shareable payment pages for your customers.",
     "exploreTitle": "Explore UPI PG",
     "exploreDescription": "Discover more ways to use UPI PG for your payment needs",
     "exploreAboutTitle": "About UPI PG",
@@ -55,7 +58,10 @@
     "exploreDevelopersTitle": "For Developers",
     "exploreDevelopersDescription": "Integrate UPI payments into your website or application with our developer tools.",
     "exploreEmbedTitle": "Embed Widget",
-    "exploreEmbedDescription": "Add a payment form to your website with our simple embeddable widget."
+    "exploreEmbedDescription": "Add a payment form to your website with our simple embeddable widget.",
+    "promoTitle": "Looking for Custom Web Development & IT Solutions?",
+    "promoDescription": "Need a powerful, scalable, and beautifully designed website or application for your business? Our parent organization, CIT India, delivers world-class technology solutions.",
+    "promoButton": "Visit CIT India"
   },
   "AboutPage": {
     "title": "About UPI PG - India's Leading Free UPI Payment Solution",

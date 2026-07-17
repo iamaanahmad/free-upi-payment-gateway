@@ -66,44 +66,41 @@ export default function AuthForm({ mode }: AuthFormProps) {
       });
   }
 
-  const setupAuthListener = () => {
-    if (!auth) return () => {};
-    setLoading(true);
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      unsubscribe();
-      setLoading(false);
-      if (user) {
-        handleAuthSuccess();
-      }
-    });
-    return unsubscribe;
-  }
-
-  const onEmailSubmit = (values: z.infer<typeof formSchema>) => {
+  const onEmailSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!auth) return;
-    const unsubscribe = setupAuthListener();
-    
-    onAuthStateChanged(auth, (user) => {
-        unsubscribe(); 
-        setLoading(false);
-        if (user) {
-            handleAuthSuccess();
-        } else {
-            handleAuthError();
-        }
-    });
-
-    if (mode === "signup") {
-      initiateEmailSignUp(auth, values.email, values.password);
-    } else {
-      initiateEmailSignIn(auth, values.email, values.password);
+    setLoading(true);
+    try {
+      const { createUserWithEmailAndPassword, signInWithEmailAndPassword } = await import('firebase/auth');
+      if (mode === "signup") {
+        await createUserWithEmailAndPassword(auth, values.email, values.password);
+      } else {
+        await signInWithEmailAndPassword(auth, values.email, values.password);
+      }
+      handleAuthSuccess();
+    } catch (error) {
+      console.error(error);
+      handleAuthError();
+    } finally {
+      setLoading(false);
     }
   };
 
-  const onGoogleSubmit = () => {
+  const onGoogleSubmit = async () => {
     if (!auth) return;
-    setupAuthListener();
-    initiateGoogleSignIn(auth);
+    setLoading(true);
+    try {
+      const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      handleAuthSuccess();
+    } catch (error: any) {
+      console.error(error);
+      if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+        handleAuthError();
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

@@ -30,6 +30,5 @@ export default function middleware(req: NextRequest) {
 
 export const config = {
   // Only match application pages. Exclude API routes, Next static assets, files with extensions
-  // and the embed path so static assets (/_next/...) are not prefixed with locale.
-  matcher: ['/((?!api|_next|embed|.*\\..*).*)']
+  matcher: ['/((?!api|_next|.*\\..*).*)']
 };

@@ -32,8 +32,8 @@ export default function Footer() {
             <Link href={`/${locale}/privacy`} className="text-sm text-muted-foreground hover:text-primary transition-colors hover:underline">
               {t('privacy')}
             </Link>
-            <Link href={`/${locale}/embed`} className="text-sm text-muted-foreground hover:text-primary transition-colors hover:underline">
-              {t('embed')}
+            <Link href="https://github.com/Centre-for-Information-Technology-India/upi-pg" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors hover:underline">
+                {t('github')}
             </Link>
           </div>
         </div>

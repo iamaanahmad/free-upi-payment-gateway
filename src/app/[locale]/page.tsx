@@ -216,6 +216,36 @@ export default function Home() {
         </CardContent>
       </Card>
 
+      <div className="mt-8 text-center w-full max-w-2xl">
+        <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10 w-full sm:w-auto">
+          <Link href="https://upipg.cit.org.in/en/pay/NR9vGr0ewpxVyCSbkNGi" target="_blank" rel="noopener noreferrer">
+            ❤️ Donate to Support this tool
+          </Link>
+        </Button>
+      </div>
+
+      <div className="mt-12 w-full max-w-4xl">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary/80 p-8 text-primary-foreground shadow-xl border border-primary/20">
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-center md:text-left">
+              <h3 className="text-2xl font-bold mb-2">{t('promoTitle')}</h3>
+              <p className="text-primary-foreground/90 max-w-lg">
+                {t('promoDescription')}
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              <Button asChild variant="secondary" size="lg" className="font-semibold rounded-full px-8 hover:scale-105 transition-transform shadow-md">
+                <Link href="https://www.cit.org.in" target="_blank" rel="noopener noreferrer">
+                  {t('promoButton')}
+                </Link>
+              </Button>
+            </div>
+          </div>
+          <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-background opacity-20 blur-3xl pointer-events-none"></div>
+          <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-background opacity-20 blur-2xl pointer-events-none"></div>
+        </div>
+      </div>
+
       <section className="w-full max-w-4xl mt-12 md:mt-16 text-center">
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t('powerTitle')}</h2>
         <p className="mt-3 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -277,6 +307,12 @@ export default function Home() {
                 <AccordionTrigger>{t('faq4Question')}</AccordionTrigger>
                 <AccordionContent>
                 {t('faq4Answer')}
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-5">
+                <AccordionTrigger>{t('faq5Question')}</AccordionTrigger>
+                <AccordionContent>
+                {t('faq5Answer')}
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

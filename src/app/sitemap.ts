@@ -1,12 +1,8 @@
-
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
+import { locales } from '@/i18n/request';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://upipg.cit.org.in';
-  const locales = [
-    'en', 'hi', 'bn-IN', 'gu-IN', 'mr-IN', 'te-IN',
-    'ta-IN', 'kn-IN', 'ml-IN', 'pa-IN', 'or-IN', 'ur-IN'
-  ];
 
   const pages = [
     { path: '', priority: 1, changeFrequency: 'yearly' as const },
